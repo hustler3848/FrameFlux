@@ -209,11 +209,11 @@ export default async function ContentPage({ params }: Props) {
                                   <Button size="sm" variant="outline" className="h-9">
                                     <Download className="mr-2 h-4 w-4" /> Download
                                   </Button>
-                                  <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}?season=${seasonNumber}&episode=${episodeNumber}`} asChild>
-                                    <Button size="sm" className="h-9">
+                                  <Button size="sm" className="h-9" asChild>
+                                    <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}?season=${seasonNumber}&episode=${episodeNumber}`}>
                                       <Play className="mr-2 h-4 w-4" /> Watch
-                                    </Button>
-                                  </Link>
+                                    </Link>
+                                  </Button>
                                 </div>
                               </div>
                             ))}
@@ -229,12 +229,12 @@ export default async function ContentPage({ params }: Props) {
                     <Download className="mr-2 h-5 w-5" />
                     Download
                   </Button>
-                  <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`} asChild>
-                    <Button size="lg" variant="secondary" className="flex-1 sm:flex-none">
+                  <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" asChild>
+                    <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`}>
                       <Play className="mr-2 h-5 w-5" />
                       Watch Now
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               )}
 
