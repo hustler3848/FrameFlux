@@ -129,7 +129,22 @@ export default function Home() {
         <HeroSection content={heroContent} />
       )}
 
-      <div className="container mx-auto max-w-screen-2xl px-4 py-8">
+      <section className="w-full py-6 md:py-8 bg-background border-b border-border">
+        <div className="container mx-auto max-w-screen-lg px-4">
+            <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                    type="search"
+                    placeholder="Search movies, anime..."
+                    className="w-full rounded-full bg-muted py-6 pl-12 pr-6 text-md shadow-inner focus:bg-background"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto max-w-screen-2xl px-4 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-12">
           
           <main className="lg:col-span-3">
@@ -159,19 +174,6 @@ export default function Home() {
 
           <aside className="lg:col-span-1 mt-12 lg:mt-0">
             <div className="sticky top-24 space-y-8">
-              <div>
-                <h3 className="text-lg font-headline font-semibold mb-4 text-foreground">Search</h3>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search..."
-                    className="pl-10"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-
               <div>
                  <h3 className="text-lg font-headline font-semibold mb-4 text-foreground">Type</h3>
                  <div className="flex flex-col space-y-2">
