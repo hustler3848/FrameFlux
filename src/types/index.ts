@@ -1,3 +1,4 @@
+
 export interface Content {
   id: string; // This will be the imdbID
   tmdbId?: number; // TMDb ID for fetching season/episode data
@@ -26,6 +27,8 @@ export interface Episode {
   name: string;
   overview: string;
   runtime: number; // in minutes
+  // This will be added dynamically on the client
+  season_number?: number; 
 }
 
 // Type for the OMDb search results list
@@ -108,3 +111,5 @@ export interface TMDbSeasonDetails {
         runtime: number | null;
     }[];
 }
+
+    
