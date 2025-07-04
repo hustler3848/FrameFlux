@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { allContent } from "@/lib/data";
 import type { Content } from "@/types";
 import { Header } from "@/components/header";
@@ -20,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { HeroSection } from "@/components/hero-section";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Footer } from "@/components/footer";
 
 const ContentSection = ({
   title,
@@ -47,7 +49,7 @@ const ContentSection = ({
 export default function Home() {
   const [content, setContent] = useState<Content[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInputValue, setSearchInputValue] = useState("");
   const [filters, setFilters] = useState<{
     type: string;
     genre: string;
@@ -57,6 +59,7 @@ export default function Home() {
     genre: "all",
     year: "all",
   });
+  const router = useRouter();
 
   useEffect(() => {
     // Simulate fetching data
@@ -88,9 +91,6 @@ export default function Home() {
 
   const filteredContent = useMemo(() => {
     return content.filter((item) => {
-      const searchMatch = item.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
       const typeMatch =
         filters.type === "all" || item.type.toLowerCase() === filters.type;
       const genreMatch =
@@ -98,21 +98,28 @@ export default function Home() {
       const yearMatch =
         filters.year === "all" || item.year.toString() === filters.year;
 
-      return searchMatch && typeMatch && genreMatch && yearMatch;
+      return typeMatch && genreMatch && yearMatch;
     });
-  }, [content, searchQuery, filters]);
+  }, [content, filters]);
 
   const handleFilterChange = (filterType: string, value: string) => {
     setFilters((prev) => ({ ...prev, [filterType]: value }));
   };
+  
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmedQuery = searchInputValue.trim();
+    if (trimmedQuery) {
+        router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+    }
+  };
 
   const isFiltering = useMemo(
     () =>
-      searchQuery !== "" ||
       filters.type !== "all" ||
       filters.genre !== "all" ||
       filters.year !== "all",
-    [searchQuery, filters]
+    [filters]
   );
   
   const heroContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 5), [content]);
@@ -131,16 +138,19 @@ export default function Home() {
 
       <section className="w-full py-6 md:py-8 bg-background border-b border-border">
         <div className="container mx-auto max-w-screen-lg px-4">
-            <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                    type="search"
-                    placeholder="Search movies, anime..."
-                    className="w-full rounded-full bg-muted py-6 pl-12 pr-6 text-md shadow-inner focus:bg-background"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-            </div>
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search movies, anime..."
+              className="w-full rounded-full bg-muted h-14 pl-12 pr-32 text-base shadow-inner focus:bg-background"
+              value={searchInputValue}
+              onChange={(e) => setSearchInputValue(e.target.value)}
+            />
+            <Button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 px-6">
+                Search
+            </Button>
+          </form>
         </div>
       </section>
 
@@ -213,12 +223,7 @@ export default function Home() {
           </aside>
         </div>
       </div>
-
-      <footer className="py-6 bg-secondary/50 mt-12">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} FrameFlux. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
