@@ -31,7 +31,7 @@ async function fetchFromOMDb(imdbId: string): Promise<OMDbContent | null> {
 
 async function fetchSeriesDetailsFromTMDb(imdbId: string): Promise<Content | null> {
     if (!TMDB_API_KEY) {
-        console.error("TMDb API key is missing.");
+        console.warn("TMDb API key is missing. For richer data like seasons and episodes, please add a TMDB_API_KEY to your environment. Falling back to basic data.");
         return null;
     }
 
