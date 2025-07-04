@@ -12,6 +12,7 @@ import { Header } from "@/components/header";
 import type { Content } from "@/types";
 import { DescriptionWithSeeMore } from "@/components/description-see-more";
 import { cn } from "@/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type Props = {
   params: { type: string; slug: string };
@@ -170,44 +171,61 @@ export default async function ContentPage({ params }: Props) {
               
               <DescriptionWithSeeMore text={item.description} className="mt-8" />
               
-              {item.type !== 'Movie' && (
+              {item.type !== 'Movie' && item.totalSeasons && item.totalSeasons > 0 ? (
                 <div className="mt-8">
-                  <h3 className="text-xl font-bold font-headline mb-4">Series Info</h3>
-                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-                    {item.totalSeasons && item.totalSeasons > 0 && (
-                        <div className="flex items-center gap-3">
-                            <Layers className="w-6 h-6 text-primary" />
-                            <div>
-                                <p className="text-muted-foreground text-sm">Seasons</p>
-                                <p className="font-bold text-lg text-foreground">{item.totalSeasons}</p>
-                            </div>
-                        </div>
-                    )}
-                    {item.duration > 0 && (
-                        <div className="flex items-center gap-3">
-                            <Clock className="w-6 h-6 text-primary" />
-                            <div>
-                                <p className="text-muted-foreground text-sm">Episode Duration</p>
-                                <p className="font-bold text-lg text-foreground">{item.duration} min</p>
-                            </div>
-                        </div>
-                    )}
-                  </div>
+                  <h3 className="text-2xl font-bold font-headline mb-4">Seasons & Episodes</h3>
+                  <Accordion type="single" collapsible className="w-full border rounded-lg">
+                    {Array.from({ length: item.totalSeasons }, (_, i) => i + 1).map((seasonNumber) => (
+                      <AccordionItem key={seasonNumber} value={`season-${seasonNumber}`} className="border-b last:border-b-0 border-border">
+                        <AccordionTrigger className="text-lg font-semibold hover:no-underline px-6 py-4">
+                          Season {seasonNumber}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="flex flex-col gap-3 px-6 pb-4 bg-black/10">
+                            {/* Mocking 10 episodes per season as API doesn't provide this easily */}
+                            {Array.from({ length: 10 }, (_, j) => j + 1).map((episodeNumber) => (
+                              <div key={episodeNumber} className="flex justify-between items-center p-3 rounded-md bg-background/70">
+                                <div>
+                                  <p className="font-semibold text-foreground">Episode {episodeNumber}</p>
+                                  {item.duration > 0 && (
+                                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
+                                      <Clock className="w-3.5 h-3.5" />
+                                      {item.duration} min
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Button size="sm" variant="outline" className="h-9">
+                                    <Download className="mr-2 h-4 w-4" /> Download
+                                  </Button>
+                                  <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}?season=${seasonNumber}&episode=${episodeNumber}`} asChild>
+                                    <Button size="sm" className="h-9">
+                                      <Play className="mr-2 h-4 w-4" /> Watch
+                                    </Button>
+                                  </Link>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              ) : (
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <Button size="lg" className="flex-1 sm:flex-none">
+                    <Download className="mr-2 h-5 w-5" />
+                    Download
+                  </Button>
+                  <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`} asChild>
+                    <Button size="lg" variant="secondary" className="flex-1 sm:flex-none">
+                      <Play className="mr-2 h-5 w-5" />
+                      Watch Now
+                    </Button>
+                  </Link>
                 </div>
               )}
-
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Button size="lg" className="flex-1 sm:flex-none">
-                  <Download className="mr-2 h-5 w-5" />
-                  Download
-                </Button>
-                <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`} asChild>
-                  <Button size="lg" variant="secondary" className="flex-1 sm:flex-none">
-                    <Play className="mr-2 h-5 w-5" />
-                    Watch Now
-                  </Button>
-                </Link>
-              </div>
 
               <div className="my-8 h-40 md:h-60 w-full rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground border border-dashed">
                 ADVERTISEMENT
