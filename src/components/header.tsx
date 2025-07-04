@@ -1,15 +1,17 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
-import { Clapperboard, Search } from "lucide-react";
+import { Clapperboard, Search, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
   searchQuery: string;
@@ -32,6 +34,23 @@ export function Header({
   genres,
   years,
 }: HeaderProps) {
+  const [typeOpen, setTypeOpen] = React.useState(false);
+  const [genreOpen, setGenreOpen] = React.useState(false);
+  const [yearOpen, setYearOpen] = React.useState(false);
+
+  const getFilterTypeLabel = (value: string) => {
+    switch (value) {
+      case 'all':
+        return 'All Types';
+      case 'movie':
+        return 'Movies';
+      case 'anime':
+        return 'Anime';
+      default:
+        return value;
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
@@ -51,53 +70,101 @@ export function Header({
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <Select
-              value={filters.type}
-              onValueChange={(value) => handleFilterChange("type", value)}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="movie">Movies</SelectItem>
-                <SelectItem value="anime">Anime</SelectItem>
-              </SelectContent>
-            </Select>
+          <nav className="flex items-center gap-1">
+            <DropdownMenu open={typeOpen} onOpenChange={setTypeOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" onMouseEnter={() => setTypeOpen(true)} className="px-3">
+                  {getFilterTypeLabel(filters.type)}
+                  <ChevronDown
+                    className={`ml-1 h-4 w-4 shrink-0 transition-transform duration-200 ${
+                      typeOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                onMouseLeave={() => setTypeOpen(false)}
+                className="w-40"
+              >
+                <DropdownMenuRadioGroup
+                  value={filters.type}
+                  onValueChange={(value) => {
+                    handleFilterChange("type", value);
+                    setTypeOpen(false);
+                  }}
+                >
+                  <DropdownMenuRadioItem value="all">All Types</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="movie">Movies</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="anime">Anime</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-            <Select
-              value={filters.genre}
-              onValueChange={(value) => handleFilterChange("genre", value)}
-            >
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Genre" />
-              </SelectTrigger>
-              <SelectContent>
-                {genres.map((genre) => (
-                  <SelectItem key={genre} value={genre}>
-                    {genre === "all" ? "All Genres" : genre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <DropdownMenu open={genreOpen} onOpenChange={setGenreOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" onMouseEnter={() => setGenreOpen(true)} className="px-3">
+                  {filters.genre === "all" ? "All Genres" : filters.genre}
+                  <ChevronDown
+                    className={`ml-1 h-4 w-4 shrink-0 transition-transform duration-200 ${
+                      genreOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                onMouseLeave={() => setGenreOpen(false)}
+                className="w-48 max-h-80 overflow-y-auto"
+              >
+                <DropdownMenuRadioGroup
+                  value={filters.genre}
+                  onValueChange={(value) => {
+                    handleFilterChange("genre", value);
+                    setGenreOpen(false);
+                  }}
+                >
+                  {genres.map((genre) => (
+                    <DropdownMenuRadioItem key={genre} value={genre}>
+                      {genre === "all" ? "All Genres" : genre}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-            <Select
-              value={filters.year}
-              onValueChange={(value) => handleFilterChange("year", value)}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Year" />
-              </SelectTrigger>
-              <SelectContent>
-                 {years.map((year) => (
-                  <SelectItem key={year} value={year}>
-                    {year === "all" ? "All Years" : year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <DropdownMenu open={yearOpen} onOpenChange={setYearOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" onMouseEnter={() => setYearOpen(true)} className="px-3">
+                  {filters.year === "all" ? "All Years" : filters.year}
+                  <ChevronDown
+                    className={`ml-1 h-4 w-4 shrink-0 transition-transform duration-200 ${
+                      yearOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                onMouseLeave={() => setYearOpen(false)}
+                className="w-40 max-h-80 overflow-y-auto"
+              >
+                <DropdownMenuRadioGroup
+                  value={filters.year}
+                  onValueChange={(value) => {
+                    handleFilterChange("year", value);
+                    setYearOpen(false);
+                  }}
+                >
+                  {years.map((year) => (
+                    <DropdownMenuRadioItem key={year} value={year}>
+                      {year === "all" ? "All Years" : year}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
         </div>
       </div>
     </header>
