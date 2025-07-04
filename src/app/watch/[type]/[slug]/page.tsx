@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getContentBySlug } from '@/lib/actions';
+import { getContentBySlug, getInitialContent } from '@/lib/actions';
 import type { Content, Episode, Season } from '@/types';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ThumbsUp, ThumbsDown, Volume2, VolumeX, Maximize, Pause, Play, Clapperboard, Layers } from 'lucide-react';
@@ -360,5 +360,7 @@ export default function WatchPage() {
     </div>
   );
 }
+
+    
 
     
