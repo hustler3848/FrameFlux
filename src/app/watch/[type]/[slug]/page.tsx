@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { allContent } from '@/lib/data';
+import { getContentBySlug, getInitialContent } from '@/lib/data';
 import type { Content } from '@/types';
 import { ContentCard } from '@/components/content-card';
 import { Button } from '@/components/ui/button';
@@ -21,19 +21,22 @@ export default function WatchPage() {
   const previousVolumeRef = useRef(1);
 
   useEffect(() => {
-    const { type, slug } = params;
-    const foundItem = allContent.find(
-      (c) => c.type.toLowerCase() === type && c.slug === slug
-    );
-    if (foundItem) {
-      setItem(foundItem);
-      const recommended = allContent
-        .filter((content) => content.type === foundItem.type && content.id !== foundItem.id)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 10);
-      setRecommendedContent(recommended);
-    } else {
-      router.push('/not-found');
+    const fetchItem = async () => {
+        const slug = params.slug;
+        if (typeof slug !== 'string') return;
+        
+        const foundItem = await getContentBySlug(slug);
+
+        if (foundItem) {
+          setItem(foundItem);
+          const recommended = await getInitialContent();
+          setRecommendedContent(recommended.filter(rec => rec.id !== foundItem.id && rec.type === foundItem.type).slice(0, 10));
+        } else {
+          router.push('/not-found');
+        }
+    };
+    if(params.slug) {
+        fetchItem();
     }
   }, [params, router]);
 

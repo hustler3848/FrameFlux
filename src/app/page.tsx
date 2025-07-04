@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { allContent } from "@/lib/data";
+import { getInitialContent } from "@/lib/data";
 import type { Content } from "@/types";
 import { Header } from "@/components/header";
 import { ContentCard } from "@/components/content-card";
@@ -63,11 +63,13 @@ export default function Home() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Simulate fetching data
-    setTimeout(() => {
-      setContent(allContent);
-      setIsLoading(false);
-    }, 1000);
+    const fetchContent = async () => {
+        setIsLoading(true);
+        const initialContent = await getInitialContent();
+        setContent(initialContent);
+        setIsLoading(false);
+    };
+    fetchContent();
   }, []);
   
   const handleFilterChange = useCallback((filterType: string, value: string) => {
@@ -99,9 +101,10 @@ export default function Home() {
 
   const years = useMemo(() => {
     if (!content.length) return [];
-    return ["all", ...[...new Set(content.map((item) => item.year.toString()))].sort(
+    const uniqueYears = [...new Set(content.map((item) => item.year.toString()))].sort(
       (a, b) => Number(b) - Number(a)
-    )];
+    );
+    return ["all", ...uniqueYears];
   }, [content]);
 
   const filteredContent = useMemo(() => {

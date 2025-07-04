@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -10,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { allContent } from '@/lib/data';
+import { searchContent } from '@/lib/data';
 import type { Content } from '@/types';
 import { ScrollArea } from './ui/scroll-area';
 import Link from 'next/link';
@@ -44,14 +43,7 @@ export function SearchDialog() {
     const search = async () => {
         if (debouncedQuery.length > 2) {
             setIsLoading(true);
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const searchResults = allContent.filter(
-                (item) =>
-                item.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-                item.description.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-                item.genre.some((g) => g.toLowerCase().includes(debouncedQuery.toLowerCase()))
-            );
+            const searchResults = await searchContent(debouncedQuery);
             setResults(searchResults);
             setIsLoading(false);
         } else {
@@ -104,7 +96,7 @@ export function SearchDialog() {
                     onClick={() => setOpen(false)}
                   >
                     <div className="relative w-16 h-24 rounded-md overflow-hidden flex-shrink-0 shadow-md">
-                        <Image src={item.imageUrl} alt={item.title} fill className="object-cover" data-ai-hint={`${item.type.toLowerCase()} ${item.genre[0].toLowerCase()}`} sizes="64px" />
+                        <Image src={item.imageUrl} alt={item.title} fill className="object-cover" data-ai-hint={`${item.type.toLowerCase()} genre`} sizes="64px" />
                     </div>
                     <div>
                         <p className="font-semibold group-hover:text-primary transition-colors">{item.title}</p>

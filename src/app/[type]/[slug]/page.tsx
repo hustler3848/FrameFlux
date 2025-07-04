@@ -2,12 +2,13 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
-import { allContent } from "@/lib/data";
+import { getContentBySlug, getInitialContent } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Star, Calendar, Clock, Tv, Download, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/components/content-card";
 import { Header } from "@/components/header";
+import type { Content } from "@/types";
 
 type Props = {
   params: { type: string; slug: string };
@@ -17,10 +18,8 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { type, slug } = params;
-  const item = allContent.find(
-    (c) => c.type.toLowerCase() === type && c.slug === slug
-  );
+  const { slug } = params;
+  const item = await getContentBySlug(slug);
 
   if (!item) {
     return {
@@ -37,9 +36,9 @@ export async function generateMetadata(
     openGraph: {
       title: `${item.title} | FrameFlux`,
       description: item.description,
-      type: "video.movie", // or video.tv_show based on item.type
+      type: "video.movie", 
       images: [item.imageUrl, ...previousImages],
-      url: `/${type}/${slug}`,
+      url: `/${item.type.toLowerCase()}/${item.slug}`,
     },
     twitter: {
       card: "summary_large_image",
@@ -51,24 +50,23 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-    return allContent.map((item) => ({
+    const initialContent = await getInitialContent();
+    return initialContent.map((item) => ({
       type: item.type.toLowerCase(),
       slug: item.slug,
     }));
 }
 
 
-export default function ContentPage({ params }: Props) {
+export default async function ContentPage({ params }: Props) {
   const { type, slug } = params;
-  const item = allContent.find(
-    (c) => c.type.toLowerCase() === type && c.slug === slug
-  );
+  const item = await getContentBySlug(slug);
 
   if (!item) {
     notFound();
   }
 
-  const recommendedContent = allContent
+  const recommendedContent = (await getInitialContent())
     .filter((content) => content.type === item.type && content.id !== item.id)
     .sort(() => 0.5 - Math.random())
     .slice(0, 10);
@@ -91,8 +89,8 @@ export default function ContentPage({ params }: Props) {
     "image": item.imageUrl,
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": item.rating.toString(),
-      "bestRating": "5",
+      "ratingValue": (item.rating * 2).toString(), // OMDb is 0-10, we convert to 0-5. Schema needs 0-10.
+      "bestRating": "10",
       "ratingCount": Math.floor(Math.random() * 1000) + 50 // Random count
     },
     "genre": item.genre,
@@ -121,7 +119,7 @@ export default function ContentPage({ params }: Props) {
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
                   priority
-                  data-ai-hint={`${item.type.toLowerCase()} ${item.genre[0].toLowerCase()}`}
+                  data-ai-hint={`${item.type.toLowerCase()} ${item.genre[0]?.toLowerCase()}`}
                 />
               </div>
             </div>
@@ -134,7 +132,7 @@ export default function ContentPage({ params }: Props) {
               <div className="mt-4 flex flex-wrap items-center gap-4 text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  <span className="font-bold text-lg text-foreground">{item.rating}</span>
+                  <span className="font-bold text-lg text-foreground">{item.rating.toFixed(1)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     {item.type === 'Movie' ? <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-film"><path d="M4.5 10H3a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h1.5"/><path d="M19.5 10h1.5a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H18"/><path d="M7 10v10"/><path d="M17 4v10"/><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M2 8h20"/><path d="M2 16h20"/></svg> : <Tv className="w-5 h-5" />}
@@ -144,10 +142,12 @@ export default function ContentPage({ params }: Props) {
                   <Calendar className="w-5 h-5" />
                   <span>{item.year}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  <span>{item.duration} min</span>
-                </div>
+                 {item.duration > 0 && (
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-5 h-5" />
+                        <span>{item.duration} min</span>
+                    </div>
+                 )}
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">

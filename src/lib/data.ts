@@ -1,67 +1,102 @@
-import type { Content } from "@/types";
-import { slugify } from "./utils";
+import type { Content, OMDbSearchResponse, OMDbContent } from "@/types";
 
-const titles = [
-  // Movies
-  "Inception", "The Matrix", "Interstellar", "Parasite", "The Dark Knight",
-  "Pulp Fiction", "Forrest Gump", "The Lord of the Rings: The Fellowship of the Ring",
-  "Spirited Away", "The Godfather",
-  // Anime
-  "Attack on Titan", "Death Note", "Fullmetal Alchemist: Brotherhood", "One Punch Man",
-  "Naruto: Shippuden", "Your Name", "Demon Slayer", "Jujutsu Kaisen",
-  "Cowboy Bebop", "Steins;Gate"
+const API_KEY = process.env.OMDB_API_KEY;
+const API_URL = `https://www.omdbapi.com/?apikey=${API_KEY}`;
+
+// A curated list of popular movies and anime to display on the homepage.
+const initialContentIds = [
+    "tt1375666", // Inception
+    "tt0133093", // The Matrix
+    "tt0816692", // Interstellar
+    "tt6751668", // Parasite
+    "tt0468569", // The Dark Knight
+    "tt2560140", // Attack on Titan
+    "tt0877057", // Death Note
+    "tt1355642", // Fullmetal Alchemist: Brotherhood
+    "tt0245429", // Spirited Away
+    "tt9335498", // Demon Slayer
 ];
 
-const descriptions = {
-  "Inception": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-  "The Matrix": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
-  "Interstellar": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-  "Parasite": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
-  "The Dark Knight": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-  "Pulp Fiction": "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
-  "Forrest Gump": "The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal and other historical events unfold from the perspective of an Alabama man with an IQ of 75, whose only desire is to be reunited with his childhood sweetheart.",
-  "The Lord of the Rings: The Fellowship of the Ring": "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
-  "Spirited Away": "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits, and where humans are changed into beasts.",
-  "The Godfather": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-  "Attack on Titan": "After his hometown is destroyed and his mother is killed, young Eren Yeager vows to cleanse the earth of the giant humanoid Titans that have brought humanity to the brink of extinction.",
-  "Death Note": "An intelligent high school student goes on a secret crusade to eliminate criminals from the world after discovering a notebook that can kill anyone whose name is written in it.",
-  "Fullmetal Alchemist: Brotherhood": "Two brothers search for a Philosopher's Stone after an attempt to revive their deceased mother goes awry and leaves them in damaged physical forms.",
-  "One Punch Man": "The story of Saitama, a hero that does it just for fun & can defeat enemies with a single punch.",
-  "Naruto: Shippuden": "Naruto Uzumaki, is a loud, hyperactive, adolescent ninja who constantly searches for approval and recognition, as well as to become Hokage, who is acknowledged as the leader and strongest of all ninja in the village.",
-  "Your Name": "Two strangers find themselves linked in a bizarre way. When a connection forms, will distance be the only thing to keep them apart?",
-  "Demon Slayer": "A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon slowly. Tanjiro sets out to become a demon slayer to avenge his family and cure his sister.",
-  "Jujutsu Kaisen": "A boy swallows a cursed talisman - the finger of a demon - and becomes cursed himself. He enters a shaman's school to be able to locate the demon's other body parts and thus exorcise himself.",
-  "Cowboy Bebop": "The futuristic misadventures and tragedies of an easygoing bounty hunter and his partners.",
-  "Steins;Gate": "A group of friends have customized their microwave so that it can send text messages to the past. As they perform different experiments, an organization named SERN who has been doing their own research on time travel tracks them down and now the friends have to find a way to avoid being captured by them."
-};
+// Helper to format OMDb API response into our Content type
+function formatContent(omdbItem: OMDbContent): Content {
+    const type = omdbItem.Type === 'movie' ? 'Movie' : 'Anime'; // Treat 'series' as 'Anime'
+    const rating = omdbItem.imdbRating !== 'N/A' ? parseFloat(omdbItem.imdbRating) : 0;
+    
+    return {
+        id: omdbItem.imdbID,
+        title: omdbItem.Title,
+        description: omdbItem.Plot,
+        type: type,
+        genre: omdbItem.Genre ? omdbItem.Genre.split(', ') : [],
+        year: parseInt(omdbItem.Year, 10) || new Date().getFullYear(),
+        rating: Math.round((rating / 2) * 10) / 10, // Scale to 5 stars, one decimal place
+        imageUrl: omdbItem.Poster !== 'N/A' ? omdbItem.Poster.replace('SX300', 'SX600') : 'https://placehold.co/600x900.png',
+        slug: omdbItem.imdbID, // Using imdbID as the slug
+        duration: omdbItem.Runtime !== 'N/A' ? parseInt(omdbItem.Runtime.replace(/ min/g, ''), 10) : 0,
+    };
+}
 
-const genres = {
-  Movie: ["Sci-Fi", "Action", "Drama", "Crime", "Adventure", "Fantasy", "Animation"],
-  Anime: ["Action", "Shounen", "Fantasy", "Thriller", "Sci-Fi", "Drama", "Supernatural", "Mystery"]
-};
 
-const types = [
-  'Movie', 'Movie', 'Movie', 'Movie', 'Movie', 'Movie', 'Movie', 'Movie', 'Movie', 'Movie',
-  'Anime', 'Anime', 'Anime', 'Anime', 'Anime', 'Anime', 'Anime', 'Anime', 'Anime', 'Anime'
-];
+export async function getInitialContent(): Promise<Content[]> {
+    if (!API_KEY) {
+        console.error("OMDb API key is missing. Please add OMDB_API_KEY to your .env.local file.");
+        return [];
+    }
+    // Using Promise.allSettled to avoid failing the whole batch if one ID is invalid
+    const results = await Promise.allSettled(initialContentIds.map(id => getContentBySlug(id)));
+    
+    return results
+      .filter((result): result is PromiseFulfilledResult<Content> => result.status === 'fulfilled' && result.value !== null)
+      .map(result => result.value);
+}
 
-export const allContent: Content[] = titles.map((title, index) => {
-  const type = types[index] as 'Movie' | 'Anime';
-  return {
-    id: (index + 1).toString(),
-    title: title,
-    description: descriptions[title as keyof typeof descriptions],
-    type: type,
-    genre: [
-      genres[type][index % genres[type].length],
-      genres[type][(index + 1) % genres[type].length]
-    ],
-    year: 2024 - (index % 15),
-    rating: Math.round((4 + Math.random()) * 10) / 10, // 4.0 to 5.0
-    imageUrl: `https://placehold.co/600x900.png`,
-    slug: slugify(title),
-    duration: type === 'Movie' 
-      ? Math.floor(Math.random() * 71) + 110 // 110-180 min
-      : Math.floor(Math.random() * 61) + 90, // 90-150 min
-  };
-});
+
+export async function getContentBySlug(slug: string): Promise<Content | null> {
+    if (!API_KEY) {
+        console.log("OMDb API key is missing.");
+        return null;
+    }
+    try {
+        const response = await fetch(`${API_URL}&i=${slug}&plot=full`);
+        if (!response.ok) {
+            console.error('OMDb API request failed with status:', response.status);
+            return null;
+        }
+        const data: OMDbContent = await response.json();
+        if (data.Response === "False") {
+            return null;
+        };
+        return formatContent(data);
+    } catch (error) {
+        console.error(`Error fetching content for slug (ID) ${slug}:`, error);
+        return null;
+    }
+}
+
+export async function searchContent(query: string): Promise<Content[]> {
+    if (!API_KEY || !query) return [];
+    try {
+        const response = await fetch(`${API_URL}&s=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error('Failed to search content');
+        const data: OMDbSearchResponse = await response.json();
+
+        if (data.Response === "True") {
+            return data.Search.map(item => ({
+                id: item.imdbID,
+                title: item.Title,
+                description: '', 
+                type: item.Type === 'movie' ? 'Movie' : 'Anime',
+                genre: [],
+                year: parseInt(item.Year, 10) || 0,
+                rating: 0,
+                imageUrl: item.Poster !== 'N/A' ? item.Poster.replace('SX300', 'SX600') : 'https://placehold.co/600x900.png',
+                slug: item.imdbID,
+                duration: 0,
+            }));
+        }
+        return [];
+    } catch (error) {
+        console.error(`Error searching content for query "${query}":`, error);
+        return [];
+    }
+}
