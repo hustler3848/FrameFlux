@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { allContent } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
@@ -154,10 +155,12 @@ export default function ContentPage({ params }: Props) {
                   <Download className="mr-2 h-5 w-5" />
                   Download
                 </Button>
-                <Button size="lg" variant="secondary" className="flex-1 sm:flex-none">
-                  <Play className="mr-2 h-5 w-5" />
-                  Watch Now
-                </Button>
+                <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`} asChild>
+                  <Button size="lg" variant="secondary" className="flex-1 sm:flex-none">
+                    <Play className="mr-2 h-5 w-5" />
+                    Watch Now
+                  </Button>
+                </Link>
               </div>
 
               <div className="my-8 h-40 md:h-60 w-full rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground border border-dashed">
