@@ -58,7 +58,7 @@ function EpisodePlaylist({ item, currentEpisode }: { item: Content, currentEpiso
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700 text-white">
                             {item.seasons.map(season => (
-                                <SelectItem key={season.season_number} value={season.season_number.toString()} className="focus:bg-primary/20">
+                                <SelectItem key={season.season_number} value={season.season_number.toString()} className="focus:bg-primary/20 focus:text-white">
                                     {season.name} ({season.episode_count} Episodes)
                                 </SelectItem>
                             ))}
@@ -74,7 +74,7 @@ function EpisodePlaylist({ item, currentEpisode }: { item: Content, currentEpiso
                             key={episode.episode_number}
                             href={`/watch/${item.type.toLowerCase()}/${item.slug}?season=${selectedSeason.season_number}&episode=${episode.episode_number}`}
                             className={cn(
-                                "block p-3 rounded-md hover:bg-white/10 transition-colors",
+                                "block p-3 rounded-md hover:bg-white/10",
                                 currentEpisode?.episode_number === episode.episode_number && currentEpisode?.season_number === selectedSeason.season_number && "bg-primary/20 hover:bg-primary/30"
                             )}
                         >
