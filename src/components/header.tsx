@@ -3,6 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Clapperboard, Search, Bell, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,14 +18,16 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navLinks = [
-    { href: "/?type=movie", label: "Movies" },
-    { href: "/?type=anime", label: "Anime" },
+    { href: "/?type=movie", label: "Movies", type: "movie" },
+    { href: "/?type=anime", label: "Anime", type: "anime" },
 ];
 
 
 export function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [openMobileMenu, setOpenMobileMenu] = React.useState(false);
+  const searchParams = useSearchParams();
+  const activeType = searchParams.get("type");
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +56,16 @@ export function Header() {
             
             <nav className="hidden md:flex items-center gap-6">
                 {navLinks.map((link) => (
-                    <Link key={link.label} href={link.href} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                    <Link
+                        key={link.label}
+                        href={link.href}
+                        className={cn(
+                            "text-sm font-medium transition-colors hover:text-foreground",
+                            activeType === link.type
+                                ? "text-foreground"
+                                : "text-muted-foreground"
+                        )}
+                    >
                         {link.label}
                     </Link>
                 ))}
@@ -108,7 +120,17 @@ export function Header() {
                             <span className="font-bold font-headline text-xl">FrameFlux</span>
                         </Link>
                         {navLinks.map((link) => (
-                            <Link key={link.label} href={link.href} className="text-lg font-medium text-foreground transition-colors hover:text-primary" onClick={() => setOpenMobileMenu(false)}>
+                            <Link
+                                key={link.label}
+                                href={link.href}
+                                className={cn(
+                                    "text-lg font-medium transition-colors hover:text-primary",
+                                    activeType === link.type
+                                        ? "text-foreground"
+                                        : "text-muted-foreground"
+                                )}
+                                onClick={() => setOpenMobileMenu(false)}
+                            >
                                 {link.label}
                             </Link>
                         ))}
