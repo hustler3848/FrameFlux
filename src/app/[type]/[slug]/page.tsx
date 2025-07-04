@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/components/content-card";
 import { Header } from "@/components/header";
 import type { Content } from "@/types";
+import { DescriptionWithSeeMore } from "@/components/description-see-more";
 
 type Props = {
   params: { type: string; slug: string };
@@ -149,9 +150,7 @@ export default async function ContentPage({ params }: Props) {
                 ))}
               </div>
               
-              <p className="mt-8 text-lg text-foreground/80 leading-relaxed">
-                {item.description}
-              </p>
+              <DescriptionWithSeeMore text={item.description} className="mt-8" />
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button size="lg" className="flex-1 sm:flex-none">
