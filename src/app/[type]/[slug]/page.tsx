@@ -208,10 +208,10 @@ export default async function ContentPage({ params }: Props) {
                                   {/* Mocking 10 episodes per season as API doesn't provide this easily */}
                                   {Array.from({ length: 10 }, (_, j) => j + 1).map((episodeNumber) => (
                                     <div key={episodeNumber} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 p-3 rounded-md bg-background/70">
-                                      <div>
+                                      <div className="flex justify-between items-baseline">
                                         <p className="font-semibold text-foreground">Episode {episodeNumber}</p>
                                         {item.duration > 0 && (
-                                          <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
+                                          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                                             <Clock className="w-3.5 h-3.5" />
                                             {item.duration} min
                                           </p>
