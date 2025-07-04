@@ -137,7 +137,7 @@ export default function Home() {
       )}
 
       <section className="w-full py-6 md:py-8 bg-background border-b border-border">
-        <div className="container mx-auto max-w-screen-lg px-4">
+        <div className="container mx-auto max-w-screen-2xl px-4">
           <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
