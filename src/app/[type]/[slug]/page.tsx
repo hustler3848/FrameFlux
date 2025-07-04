@@ -114,7 +114,7 @@ export default async function ContentPage({ params }: Props) {
 
         <main className="container mx-auto max-w-7xl px-2 sm:px-4 py-8 md:py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-1">
+            <div className="md:col-span-1 opacity-0 animate-slide-in-from-left">
               <div className="aspect-[2/3] relative w-full rounded-2xl shadow-lg overflow-hidden">
                 <Image
                   src={item.imageUrl}
@@ -130,17 +130,17 @@ export default async function ContentPage({ params }: Props) {
 
             <div className="md:col-span-2">
               <Badge className={cn(
-                "mb-2 font-poppins",
+                "mb-2 font-poppins opacity-0 animate-fade-in [animation-delay:200ms]",
                 item.type === 'Anime' ? 'bg-accent text-accent-foreground' 
                 : item.type === 'Movie' ? 'bg-primary text-primary-foreground'
                 : 'bg-secondary text-secondary-foreground'
               )}>
                 {item.type}
               </Badge>
-              <h1 className="text-4xl lg:text-5xl font-bold font-headline text-foreground">
+              <h1 className="text-4xl lg:text-5xl font-bold font-headline text-foreground opacity-0 animate-slide-in-from-top [animation-delay:300ms]">
                 {item.title}
               </h1>
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-muted-foreground">
+              <div className="mt-4 flex flex-wrap items-center gap-4 text-muted-foreground opacity-0 animate-slide-in-from-top [animation-delay:400ms]">
                 <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                   <span className="font-bold text-lg text-foreground">{item.rating.toFixed(1)}</span>
@@ -173,7 +173,7 @@ export default async function ContentPage({ params }: Props) {
                 )}
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-2">
+              <div className="mt-6 flex flex-wrap gap-2 opacity-0 animate-slide-in-from-top [animation-delay:500ms]">
                 {item.genre.map((g) => (
                    <Link key={g} href={`/?genre=${g}`} passHref>
                     <Badge variant="secondary" className="hover:bg-primary/10 hover:border-primary/50 cursor-pointer transition-colors">{g}</Badge>
@@ -181,14 +181,14 @@ export default async function ContentPage({ params }: Props) {
                 ))}
               </div>
               
-              <DescriptionWithSeeMore text={item.description} className="mt-8" />
+              <DescriptionWithSeeMore text={item.description} className="mt-8 opacity-0 animate-slide-in-from-top [animation-delay:600ms]" />
               
               {item.type !== 'Movie' && item.seasons && item.seasons.length > 0 ? (
-                <div className="mt-8">
+                <div className="mt-8 opacity-0 animate-fade-in [animation-delay:700ms]">
                   <SeriesAccordion item={item} />
                 </div>
               ) : (
-                <div className="mt-8 flex flex-wrap gap-4">
+                <div className="mt-8 flex flex-wrap gap-4 opacity-0 animate-fade-in [animation-delay:700ms]">
                   <Button size="lg" className="flex-1 sm:flex-none">
                     <Download className="mr-2 h-5 w-5" />
                     Download
@@ -202,7 +202,7 @@ export default async function ContentPage({ params }: Props) {
                 </div>
               )}
 
-              <div className="my-8 h-40 md:h-60 w-full rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground border border-dashed">
+              <div className="my-8 h-40 md:h-60 w-full rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground border border-dashed opacity-0 animate-fade-in [animation-delay:800ms]">
                 ADVERTISEMENT
               </div>
             </div>
