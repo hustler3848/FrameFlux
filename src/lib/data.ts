@@ -7,11 +7,21 @@ export const initialContentIds = [
     "tt0816692", // Interstellar
     "tt6751668", // Parasite
     "tt0468569", // The Dark Knight
+    "tt0111161", // The Shawshank Redemption
+    "tt0110912", // Pulp Fiction
+    "tt4633694", // Spider-Man: Into the Spider-Verse
+    "tt0120737", // The Lord of the Rings: The Fellowship of the Ring
+    "tt0109830", // Forrest Gump
     "tt2560140", // Attack on Titan
     "tt0877057", // Death Note
     "tt1355642", // Fullmetal Alchemist: Brotherhood
     "tt0245429", // Spirited Away
     "tt9335498", // Demon Slayer
+    "tt0213338", // Cowboy Bebop
+    "tt1910272", // Steins;Gate
+    "tt12343534", // Jujutsu Kaisen
+    "tt5311514", // Your Name.
+    "tt4508902", // One Punch Man
 ];
 
 // Helper to format OMDb API response into our Content type
