@@ -207,7 +207,7 @@ export default async function ContentPage({ params }: Props) {
                                 <div className="flex flex-col gap-3 px-6 pb-4 bg-black/10">
                                   {/* Mocking 10 episodes per season as API doesn't provide this easily */}
                                   {Array.from({ length: 10 }, (_, j) => j + 1).map((episodeNumber) => (
-                                    <div key={episodeNumber} className="flex justify-between items-center p-3 rounded-md bg-background/70">
+                                    <div key={episodeNumber} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 p-3 rounded-md bg-background/70">
                                       <div>
                                         <p className="font-semibold text-foreground">Episode {episodeNumber}</p>
                                         {item.duration > 0 && (
@@ -217,11 +217,11 @@ export default async function ContentPage({ params }: Props) {
                                           </p>
                                         )}
                                       </div>
-                                      <div className="flex items-center gap-2">
-                                        <Button size="sm" variant="outline" className="h-9">
+                                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                                        <Button size="sm" variant="outline" className="h-9 flex-1 sm:flex-none">
                                           <Download className="mr-2 h-4 w-4" /> Download
                                         </Button>
-                                        <Button size="sm" className="h-9" asChild>
+                                        <Button size="sm" className="h-9 flex-1 sm:flex-none" asChild>
                                           <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}?season=${seasonNumber}&episode=${episodeNumber}`}>
                                             <Play className="mr-2 h-4 w-4" /> Watch
                                           </Link>
