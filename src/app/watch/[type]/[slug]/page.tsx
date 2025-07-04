@@ -58,7 +58,7 @@ function EpisodePlaylist({ item, currentEpisode }: { item: Content, currentEpiso
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700 text-white">
                             {item.seasons.map(season => (
-                                <SelectItem key={season.season_number} value={season.season_number.toString()} className="focus:bg-primary/20 focus:text-white">
+                                <SelectItem key={season.season_number} value={season.season_number.toString()} className="focus:bg-primary/20 hover:text-white focus:text-white">
                                     {season.name} ({season.episode_count} Episodes)
                                 </SelectItem>
                             ))}
@@ -339,7 +339,16 @@ export default function WatchPage() {
             
             {isSeries && (
                 <div className="lg:col-span-4 xl:col-span-3">
-                   <EpisodePlaylist item={item} currentEpisode={currentEpisode} />
+                   {item.seasons && item.seasons.length > 0 ? (
+                       <EpisodePlaylist item={item} currentEpisode={currentEpisode} />
+                    ) : (
+                       <div className="bg-slate-900/50 rounded-lg border border-white/10 h-full flex flex-col items-center justify-center p-8 text-center">
+                          <h3 className="text-xl font-bold font-headline">Episode Data Unavailable</h3>
+                          <p className="text-white/70 mt-2">
+                              Detailed season and episode information could not be loaded. This may require a TMDb API key to be configured in the deployment environment.
+                          </p>
+                       </div>
+                   )}
                 </div>
             )}
         </div>
@@ -360,7 +369,3 @@ export default function WatchPage() {
     </div>
   );
 }
-
-    
-
-    
