@@ -61,6 +61,8 @@ export default function Home() {
   });
   const router = useRouter();
   const searchParams = useSearchParams();
+  const typeFromUrl = searchParams.get("type");
+  const genreFromUrl = searchParams.get("genre");
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -90,21 +92,19 @@ export default function Home() {
   }, [content]);
 
   useEffect(() => {
-    const typeFromUrl = searchParams.get("type");
     if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime")) {
         if (filters.type !== typeFromUrl) {
             handleFilterChange("type", typeFromUrl);
         }
     }
     
-    const genreFromUrl = searchParams.get("genre");
     if (genreFromUrl && filters.genre !== genreFromUrl) {
-      if (genresWithCount.some(g => g.name === genreFromUrl)) {
+      if (genresWithCount.length > 0 && genresWithCount.some(g => g.name === genreFromUrl)) {
         handleFilterChange("genre", genreFromUrl);
       }
     }
 
-  }, [searchParams, filters.type, filters.genre, handleFilterChange, genresWithCount]);
+  }, [typeFromUrl, genreFromUrl, filters.type, filters.genre, handleFilterChange, genresWithCount]);
 
 
   const years = useMemo(() => {
