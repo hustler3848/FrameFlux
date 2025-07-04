@@ -4,7 +4,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Clapperboard, Search, Bell, Menu } from "lucide-react";
+import { Clapperboard, Bell, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SearchDialog } from "./search-dialog";
 
 const navLinks = [
     { href: "/?type=movie", label: "Movies", type: "movie" },
@@ -74,12 +75,7 @@ export function Header() {
 
 
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
-            <Link href="/search" passHref>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Search className="h-5 w-5" />
-                  <span className="sr-only">Search</span>
-              </Button>
-            </Link>
+            <SearchDialog />
             
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
