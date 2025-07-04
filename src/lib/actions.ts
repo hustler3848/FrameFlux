@@ -11,7 +11,7 @@ export async function getContentBySlug(slug: string): Promise<Content | null> {
     }
     const apiUrl = `https://www.omdbapi.com/?apikey=${apiKey}`;
     try {
-        const response = await fetch(`${apiUrl}&i=${slug}&plot=full`);
+        const response = await fetch(`${apiUrl}&i=${slug}&plot=full`, { cache: 'no-store' });
         if (!response.ok) {
             console.error('OMDb API request failed with status:', response.status);
             return null;
@@ -42,7 +42,7 @@ export async function searchContent(query: string): Promise<Content[]> {
     
     const apiUrl = `https://www.omdbapi.com/?apikey=${apiKey}`;
     try {
-        const response = await fetch(`${apiUrl}&s=${encodeURIComponent(query)}`);
+        const response = await fetch(`${apiUrl}&s=${encodeURIComponent(query)}`, { cache: 'no-store' });
         if (!response.ok) throw new Error('Failed to search content');
         const data: OMDbSearchResponse = await response.json();
 

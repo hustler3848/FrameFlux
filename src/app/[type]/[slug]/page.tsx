@@ -49,15 +49,6 @@ export async function generateMetadata(
   };
 }
 
-export async function generateStaticParams() {
-    const initialContent = await getInitialContent();
-    return initialContent.map((item) => ({
-      type: item.type.toLowerCase(),
-      slug: item.slug,
-    }));
-}
-
-
 export default async function ContentPage({ params }: Props) {
   const { type, slug } = params;
   const item = await getContentBySlug(slug);
