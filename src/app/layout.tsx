@@ -1,7 +1,29 @@
 import type { Metadata } from "next";
+import { Inter, Poppins, Lexend_Deca } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+
+const fontInter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const fontPoppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const fontLexendDeca = Lexend_Deca({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-lexend-deca",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "FrameFlux",
@@ -15,25 +37,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-body antialiased",
+          fontInter.variable,
+          fontPoppins.variable,
+          fontLexendDeca.variable
         )}
       >
         {children}
