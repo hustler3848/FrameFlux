@@ -60,7 +60,7 @@ export function Footer() {
             <p>
                 <strong>Disclaimer:</strong> This site does not store any files on its server. All contents are provided by non-affiliated third parties.
             </p>
-            <p>&copy; {currentYear} FrameFlux. All rights reserved.</p>
+            <p>&copy; {currentYear} Darshan Lamichhane. All rights reserved.</p>
         </div>
       </div>
     </footer>
