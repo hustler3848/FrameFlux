@@ -44,7 +44,7 @@ export function HeroSection({ content }: HeroSectionProps) {
   }
 
   return (
-    <section className="relative w-full h-[50vh] md:h-[75vh] mb-8">
+    <section className="relative w-full h-[50vh] md:h-[85vh] mb-8">
       <div className="overflow-hidden h-full" ref={emblaRef}>
         <div className="flex h-full">
           {content.map((item, index) => (
