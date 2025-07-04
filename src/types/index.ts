@@ -1,5 +1,6 @@
 export interface Content {
   id: string; // This will be the imdbID
+  tmdbId?: number; // TMDb ID for fetching season/episode data
   title: string;
   description: string;
   type: 'Movie' | 'Anime' | 'Webseries';
@@ -10,6 +11,21 @@ export interface Content {
   slug: string; // Kept for consistency, will also be imdbID
   duration: number; // in minutes for movies, or per-episode for series
   totalSeasons?: number; // for series
+  seasons?: Season[];
+}
+
+export interface Season {
+  season_number: number;
+  name: string;
+  episode_count: number;
+  episodes: Episode[];
+}
+
+export interface Episode {
+  episode_number: number;
+  name: string;
+  overview: string;
+  runtime: number; // in minutes
 }
 
 // Type for the OMDb search results list
@@ -57,4 +73,38 @@ export interface OMDbContent {
     Website?: string;
     Response: 'True' | 'False';
     Error?: string;
+}
+
+// TMDb Types
+export interface TMDbFindResponse {
+    movie_results: any[];
+    tv_results: { id: number }[];
+}
+
+export interface TMDbSeriesDetails {
+    id: number;
+    name: string;
+    overview: string;
+    poster_path: string;
+    first_air_date: string;
+    genres: { id: number; name: string }[];
+    vote_average: number;
+    number_of_seasons: number;
+    episode_run_time: number[];
+    seasons: {
+        season_number: number;
+        episode_count: number;
+        name: string;
+    }[];
+}
+
+export interface TMDbSeasonDetails {
+    season_number: number;
+    name: string;
+    episodes: {
+        episode_number: number;
+        name: string;
+        overview: string;
+        runtime: number | null;
+    }[];
 }
