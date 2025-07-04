@@ -8,4 +8,5 @@ export interface Content {
   rating: number;
   imageUrl: string;
   slug: string;
+  duration: number; // in minutes
 }

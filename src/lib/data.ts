@@ -60,5 +60,8 @@ export const allContent: Content[] = titles.map((title, index) => {
     rating: Math.round((4 + Math.random()) * 10) / 10, // 4.0 to 5.0
     imageUrl: `https://placehold.co/600x900.png`,
     slug: slugify(title),
+    duration: type === 'Movie' 
+      ? Math.floor(Math.random() * 71) + 110 // 110-180 min
+      : Math.floor(Math.random() * 61) + 90, // 90-150 min
   };
 });

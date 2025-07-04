@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { allContent } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { Star, Calendar, Tv, Download, Play } from "lucide-react";
+import { Star, Calendar, Clock, Tv, Download, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/components/content-card";
 import { Header } from "@/components/header";
@@ -73,6 +73,16 @@ export default function ContentPage({ params }: Props) {
     .sort(() => 0.5 - Math.random())
     .slice(0, 10);
 
+  const formatDurationISO = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    let isoString = 'PT';
+    if (hours > 0) isoString += `${hours}H`;
+    if (mins > 0) isoString += `${mins}M`;
+    return isoString;
+  };
+  const isoDuration = formatDurationISO(item.duration);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": item.type === 'Movie' ? "Movie" : "TVEpisode",
@@ -86,7 +96,9 @@ export default function ContentPage({ params }: Props) {
       "ratingCount": Math.floor(Math.random() * 1000) + 50 // Random count
     },
     "genre": item.genre,
-    ...(item.type === 'Movie' ? { "datePublished": item.year.toString() } : { "partOfSeries": { "@type": "TVSeries", "name": item.title } })
+    ...(item.type === 'Movie' 
+        ? { "datePublished": item.year.toString(), "duration": isoDuration } 
+        : { "partOfSeries": { "@type": "TVSeries", "name": item.title }, "timeRequired": isoDuration })
   };
 
   return (
@@ -131,6 +143,10 @@ export default function ContentPage({ params }: Props) {
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
                   <span>{item.year}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  <span>{item.duration} min</span>
                 </div>
               </div>
 
