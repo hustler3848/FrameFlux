@@ -1,8 +1,5 @@
 import type { Content, OMDbSearchResponse, OMDbContent } from "@/types";
 
-const API_KEY = process.env.OMDB_API_KEY;
-const API_URL = `https://www.omdbapi.com/?apikey=${API_KEY}`;
-
 // A curated list of popular movies and anime to display on the homepage.
 const initialContentIds = [
     "tt1375666", // Inception
@@ -38,7 +35,8 @@ function formatContent(omdbItem: OMDbContent): Content {
 
 
 export async function getInitialContent(): Promise<Content[]> {
-    if (!API_KEY) {
+    const apiKey = process.env.OMDB_API_KEY;
+    if (!apiKey) {
         console.error("OMDb API key is missing. Please add OMDB_API_KEY to your .env.local file.");
         return [];
     }
@@ -52,12 +50,14 @@ export async function getInitialContent(): Promise<Content[]> {
 
 
 export async function getContentBySlug(slug: string): Promise<Content | null> {
-    if (!API_KEY) {
+    const apiKey = process.env.OMDB_API_KEY;
+    if (!apiKey) {
         console.log("OMDb API key is missing.");
         return null;
     }
+    const apiUrl = `https://www.omdbapi.com/?apikey=${apiKey}`;
     try {
-        const response = await fetch(`${API_URL}&i=${slug}&plot=full`);
+        const response = await fetch(`${apiUrl}&i=${slug}&plot=full`);
         if (!response.ok) {
             console.error('OMDb API request failed with status:', response.status);
             return null;
@@ -74,9 +74,12 @@ export async function getContentBySlug(slug: string): Promise<Content | null> {
 }
 
 export async function searchContent(query: string): Promise<Content[]> {
-    if (!API_KEY || !query) return [];
+    const apiKey = process.env.OMDB_API_KEY;
+    if (!apiKey || !query) return [];
+    
+    const apiUrl = `https://www.omdbapi.com/?apikey=${apiKey}`;
     try {
-        const response = await fetch(`${API_URL}&s=${encodeURIComponent(query)}`);
+        const response = await fetch(`${apiUrl}&s=${encodeURIComponent(query)}`);
         if (!response.ok) throw new Error('Failed to search content');
         const data: OMDbSearchResponse = await response.json();
 
