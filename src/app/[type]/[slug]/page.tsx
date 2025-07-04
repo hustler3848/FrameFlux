@@ -4,9 +4,10 @@ import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { allContent } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { Star, Calendar, Film, Tv, Download, Play } from "lucide-react";
+import { Star, Calendar, Tv, Download, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/components/content-card";
+import { Header } from "@/components/header";
 
 type Props = {
   params: { type: string; slug: string };
@@ -95,14 +96,7 @@ export default function ContentPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container mx-auto flex h-16 max-w-7xl items-center gap-4 px-2 sm:px-4">
-                <a href="/" className="flex items-center gap-2 mr-6">
-                <Film className="h-6 w-6 text-primary" />
-                <span className="font-bold font-headline text-xl">FrameFlux</span>
-                </a>
-            </div>
-        </header>
+        <Header />
 
         <main className="container mx-auto max-w-7xl px-2 sm:px-4 py-8 md:py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -131,7 +125,7 @@ export default function ContentPage({ params }: Props) {
                   <span className="font-bold text-lg text-foreground">{item.rating}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    {item.type === 'Movie' ? <Film className="w-5 h-5"/> : <Tv className="w-5 h-5" />}
+                    {item.type === 'Movie' ? <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-film"><path d="M4.5 10H3a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h1.5"/><path d="M19.5 10h1.5a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H18"/><path d="M7 10v10"/><path d="M17 4v10"/><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M2 8h20"/><path d="M2 16h20"/></svg> : <Tv className="w-5 h-5" />}
                     <span>{item.type}</span>
                 </div>
                 <div className="flex items-center gap-2">
