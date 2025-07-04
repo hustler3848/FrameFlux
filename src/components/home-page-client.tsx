@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getInitialContent } from "@/lib/actions";
 import type { Content } from "@/types";
 import { Header } from "@/components/header";
@@ -22,6 +22,11 @@ import { cn } from "@/lib/utils";
 import { HeroSection } from "@/components/hero-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Footer } from "@/components/footer";
+
+interface HomePageClientProps {
+  typeFromUrl?: string;
+  genreFromUrl?: string;
+}
 
 const ContentSection = ({
   title,
@@ -46,25 +51,18 @@ const ContentSection = ({
   </section>
 );
 
-export function HomePageClient() {
+export function HomePageClient({ typeFromUrl, genreFromUrl }: HomePageClientProps) {
   const [content, setContent] = useState<Content[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInputValue, setSearchInputValue] = useState("");
-  const [filters, setFilters] = useState<{
-    type: string;
-    genre: string;
-    year: string;
-  }>({
-    type: "all",
-    genre: "all",
+  const [filters, setFilters] = useState({
+    type: typeFromUrl || "all",
+    genre: genreFromUrl || "all",
     year: "all",
   });
   const [latestPage, setLatestPage] = useState(1);
   const ITEMS_PER_PAGE = 8;
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const typeFromUrl = searchParams.get("type");
-  const genreFromUrl = searchParams.get("genre");
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -75,11 +73,30 @@ export function HomePageClient() {
     };
     fetchContent();
   }, []);
+
+  // Sync router params to local filter state
+  useEffect(() => {
+    setFilters(prev => ({
+        ...prev,
+        type: typeFromUrl || 'all',
+        genre: genreFromUrl || 'all'
+    }))
+  }, [typeFromUrl, genreFromUrl]);
   
-  const handleFilterChange = useCallback((filterType: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [filterType]: value }));
-    setLatestPage(1);
-  }, []);
+  const handleFilterChange = useCallback((filterType: keyof typeof filters, value: string) => {
+    const newFilters = { ...filters, [filterType]: value };
+
+    const params = new URLSearchParams();
+    if (newFilters.type !== 'all') params.set('type', newFilters.type);
+    if (newFilters.genre !== 'all') params.set('genre', newFilters.genre);
+
+    // Note: We are not adding 'year' to the URL to keep it clean.
+    // It will be reset on navigation.
+
+    const queryString = params.toString();
+    router.push(queryString ? `/?${queryString}` : '/');
+
+  }, [filters, router]);
 
   const genresWithCount = useMemo(() => {
     if (!content.length) return [];
@@ -93,28 +110,6 @@ export function HomePageClient() {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
   }, [content]);
-
-  useEffect(() => {
-    if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime" || typeFromUrl === "webseries")) {
-        if (filters.type !== typeFromUrl) {
-            handleFilterChange("type", typeFromUrl);
-        }
-    } else if (!typeFromUrl && filters.type !== "all") {
-      // Clear type filter if not in URL
-      handleFilterChange("type", "all");
-    }
-    
-    if (genreFromUrl && filters.genre !== genreFromUrl) {
-      if (genresWithCount.length > 0 && genresWithCount.some(g => g.name === genreFromUrl)) {
-        handleFilterChange("genre", genreFromUrl);
-      }
-    } else if (!genreFromUrl && filters.genre !== "all") {
-      // Clear genre filter if not in URL
-      handleFilterChange("genre", "all");
-    }
-
-  }, [typeFromUrl, genreFromUrl, filters.type, filters.genre, handleFilterChange, genresWithCount]);
-
 
   const years = useMemo(() => {
     if (!content.length) return [];
@@ -141,6 +136,7 @@ export function HomePageClient() {
     e.preventDefault();
     const trimmedQuery = searchInputValue.trim();
     if (trimmedQuery) {
+        // The search dialog will handle its own state, but if we wanted a dedicated search page:
         router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
     }
   };
@@ -154,10 +150,11 @@ export function HomePageClient() {
   );
   
   const heroContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 5), [content]);
+  const popularContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 8), [content]);
 
   const sortedLatestContent = useMemo(() => {
-    return [...filteredContent].sort((a, b) => b.year - a.year);
-  }, [filteredContent]);
+    return [...content].sort((a, b) => b.year - a.year);
+  }, [content]);
 
   const totalLatestPages = Math.ceil(sortedLatestContent.length / ITEMS_PER_PAGE);
 
@@ -166,16 +163,15 @@ export function HomePageClient() {
     return sortedLatestContent.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [sortedLatestContent, latestPage]);
 
-  const popularContent = useMemo(() => [...filteredContent].sort((a,b) => b.rating - a.rating).slice(0, 8), [filteredContent]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       
-      {isLoading ? (
-        <Skeleton className="w-full h-[50vh] md:h-[85vh]" />
-      ) : (
-        <HeroSection content={heroContent} />
+      {!isFiltering && (
+          isLoading ? 
+            <Skeleton className="w-full h-[50vh] md:h-[85vh] mb-8" /> : 
+            <HeroSection content={heroContent} />
       )}
 
       <section className="w-full py-6 md:py-8 bg-background border-b border-border">
@@ -212,10 +208,7 @@ export function HomePageClient() {
                   <Button 
                       variant="link" 
                       size="sm"
-                      onClick={() => {
-                          setFilters({ type: "all", genre: "all", year: "all" });
-                          router.push('/');
-                      }}
+                      onClick={() => router.push('/')}
                       className="text-primary hover:text-primary/80 px-0"
                   >
                       Clear all filters
@@ -223,15 +216,31 @@ export function HomePageClient() {
                 </div>
               </div>
             )}
-            {isFiltering && !isLoading && filteredContent.length === 0 ? (
-               <div className="text-center py-16">
-                  <p className="text-muted-foreground text-lg">No results found.</p>
-                  <p className="text-sm text-muted-foreground">Try adjusting your filters or clearing them.</p>
-              </div>
+            
+            {isLoading ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                  {Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)}
+                </div>
+            ) : isFiltering ? (
+                 <>
+                  {filteredContent.length === 0 ? (
+                    <div className="text-center py-16">
+                        <p className="text-muted-foreground text-lg">No results found.</p>
+                        <p className="text-sm text-muted-foreground">Try adjusting your filters or clearing them.</p>
+                    </div>
+                  ) : (
+                    <section className="mb-12">
+                      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                        {filteredContent.map((item) => (
+                          <ContentCard key={item.id} content={item} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                 </>
             ) : (
               <>
                 <ContentSection title="Most Popular" items={popularContent} isLoading={isLoading}/>
-              
                 <ContentSection title="Latest Releases" items={paginatedLatestContent} isLoading={isLoading}/>
                 
                 {totalLatestPages > 1 && !isLoading && (
@@ -277,7 +286,7 @@ export function HomePageClient() {
               
               <div>
                 <h3 className="text-lg font-headline font-semibold mb-4 text-foreground">Year</h3>
-                <Select value={filters.year} onValueChange={(value) => handleFilterChange('year', value)}>
+                <Select value={filters.year} onValueChange={(value) => setFilters(f => ({...f, year: value}))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a year" />
                   </SelectTrigger>
