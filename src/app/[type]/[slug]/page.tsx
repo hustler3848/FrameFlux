@@ -96,7 +96,7 @@ export default function ContentPage({ params }: Props) {
       />
       <div className="min-h-screen bg-background">
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+            <div className="container mx-auto flex h-16 max-w-7xl items-center gap-4 px-2 sm:px-4">
                 <a href="/" className="flex items-center gap-2 mr-6">
                 <Film className="h-6 w-6 text-primary" />
                 <span className="font-bold font-headline text-xl">FrameFlux</span>
@@ -104,7 +104,7 @@ export default function ContentPage({ params }: Props) {
             </div>
         </header>
 
-        <main className="container mx-auto max-w-7xl px-4 py-8 md:py-12">
+        <main className="container mx-auto max-w-7xl px-2 sm:px-4 py-8 md:py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <div className="aspect-[2/3] relative w-full rounded-2xl shadow-lg overflow-hidden">
@@ -171,7 +171,7 @@ export default function ContentPage({ params }: Props) {
         </main>
 
         <section className="py-12 border-t border-border bg-secondary/20">
-          <div className="container mx-auto max-w-7xl px-4">
+          <div className="container mx-auto max-w-7xl px-2 sm:px-4">
             <h2 className="text-3xl font-headline font-bold mb-8 text-foreground">
               You Might Like
             </h2>

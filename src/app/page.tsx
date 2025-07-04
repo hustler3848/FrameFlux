@@ -36,9 +36,9 @@ const ContentSection = ({
     <h2 className="text-3xl font-headline font-bold mb-8 text-foreground">
       {title}
     </h2>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
       {isLoading
-        ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+        ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
         : items.map((item) => (
             <ContentCard key={`${title}-${item.id}`} content={item} />
           ))}
@@ -137,7 +137,7 @@ export default function Home() {
       )}
 
       <section className="w-full py-6 md:py-8 bg-background border-b border-border">
-        <div className="container mx-auto max-w-screen-2xl px-4">
+        <div className="container mx-auto max-w-screen-2xl px-2 sm:px-4">
           <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
@@ -154,7 +154,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="container mx-auto max-w-screen-2xl px-4 pt-8">
+      <div className="container mx-auto max-w-screen-2xl px-2 sm:px-4 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-12">
           
           <main className="lg:col-span-3">

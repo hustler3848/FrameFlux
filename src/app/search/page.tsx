@@ -22,7 +22,7 @@ export default function SearchPage({
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="container mx-auto max-w-screen-2xl px-4 pt-8 flex-1">
+      <main className="container mx-auto max-w-screen-2xl px-2 sm:px-4 pt-8 flex-1">
         {query ? (
           <>
             <h1 className="text-3xl font-headline font-bold mb-8 text-foreground">
@@ -30,7 +30,7 @@ export default function SearchPage({
             </h1>
 
             {searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                 {searchResults.map((item) => (
                   <ContentCard key={item.id} content={item} />
                 ))}
