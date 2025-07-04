@@ -14,13 +14,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navLinks = [
-    { href: "#", label: "Movies" },
-    { href: "#", label: "Anime" },
-    { href: "#", label: "Trending" },
+    { href: "/?type=movie", label: "Movies" },
+    { href: "/?type=anime", label: "Anime" },
 ];
 
 
@@ -64,10 +62,12 @@ export function Header() {
 
 
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Search className="h-5 w-5" />
-                <span className="sr-only">Search</span>
-            </Button>
+            <Link href="/search" passHref>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Search className="h-5 w-5" />
+                  <span className="sr-only">Search</span>
+              </Button>
+            </Link>
             
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -94,26 +94,6 @@ export function Header() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                        <Avatar className="h-9 w-9">
-                            <AvatarImage src="https://placehold.co/100x100.png" alt="User avatar" data-ai-hint="user avatar" />
-                            <AvatarFallback>FF</AvatarFallback>
-                        </Avatar>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>My List</DropdownMenuItem>
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Log out</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-            
             <Sheet open={openMobileMenu} onOpenChange={setOpenMobileMenu}>
                 <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="md:hidden h-9 w-9">

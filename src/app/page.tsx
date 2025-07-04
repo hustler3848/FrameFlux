@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { allContent } from "@/lib/data";
 import type { Content } from "@/types";
 import { Header } from "@/components/header";
@@ -60,6 +60,7 @@ export default function Home() {
     year: "all",
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     // Simulate fetching data
@@ -68,6 +69,20 @@ export default function Home() {
       setIsLoading(false);
     }, 1000);
   }, []);
+  
+  const handleFilterChange = useCallback((filterType: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [filterType]: value }));
+  }, []);
+
+  useEffect(() => {
+    const typeFromUrl = searchParams.get("type");
+    if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime")) {
+        if (filters.type !== typeFromUrl) {
+            handleFilterChange("type", typeFromUrl);
+        }
+    }
+  }, [searchParams, filters.type, handleFilterChange]);
+
 
   const genresWithCount = useMemo(() => {
     if (!content.length) return [];
@@ -101,10 +116,6 @@ export default function Home() {
       return typeMatch && genreMatch && yearMatch;
     });
   }, [content, filters]);
-
-  const handleFilterChange = (filterType: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [filterType]: value }));
-  };
   
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
