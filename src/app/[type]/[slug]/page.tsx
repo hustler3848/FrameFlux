@@ -69,7 +69,7 @@ export default function ContentPage({ params }: Props) {
   const recommendedContent = allContent
     .filter((content) => content.type === item.type && content.id !== item.id)
     .sort(() => 0.5 - Math.random())
-    .slice(0, 5);
+    .slice(0, 10);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -93,7 +93,7 @@ export default function ContentPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="min-h-screen bg-secondary/20">
+      <div className="min-h-screen bg-background">
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
                 <a href="/" className="flex items-center gap-2 mr-6">
@@ -103,8 +103,8 @@ export default function ContentPage({ params }: Props) {
             </div>
         </header>
 
-        <main className="container mx-auto px-4 py-8 md:py-16">
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+        <main className="container mx-auto max-w-7xl px-4 py-8 md:py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <div className="aspect-[2/3] relative w-full rounded-2xl shadow-lg overflow-hidden">
                 <Image
@@ -167,12 +167,12 @@ export default function ContentPage({ params }: Props) {
           </div>
         </main>
 
-        <section className="py-12 md:py-16 border-t border-border bg-background">
-          <div className="container mx-auto px-4">
+        <section className="py-12 border-t border-border bg-secondary/20">
+          <div className="container mx-auto max-w-7xl px-4">
             <h2 className="text-3xl font-headline font-bold mb-8 text-foreground">
               You Might Like
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
               {recommendedContent.map((content) => (
                 <ContentCard key={content.id} content={content} />
               ))}

@@ -15,7 +15,7 @@ export function ContentCard({ content }: ContentCardProps) {
       href={`/${content.type.toLowerCase()}/${content.slug}`}
       className="group block"
     >
-      <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 ease-in-out group-hover:shadow-xl group-hover:scale-105">
+      <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 ease-in-out group-hover:shadow-xl group-hover:scale-105 group-hover:-translate-y-1">
         <div className="relative aspect-[2/3] w-full">
           <Image
             src={content.imageUrl}
