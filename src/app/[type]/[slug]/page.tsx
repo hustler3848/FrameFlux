@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata, ResolvingMetadata } from "next";
 import { allContent } from "@/lib/data";
-import { slugify } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Star, Calendar, Film, Tv } from "lucide-react";
+import { Star, Calendar, Film, Tv, Download, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ContentCard } from "@/components/content-card";
 
 type Props = {
   params: { type: string; slug: string };
@@ -64,6 +65,11 @@ export default function ContentPage({ params }: Props) {
   if (!item) {
     notFound();
   }
+
+  const recommendedContent = allContent
+    .filter((content) => content.type === item.type && content.id !== item.id)
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 5);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -143,12 +149,36 @@ export default function ContentPage({ params }: Props) {
                 {item.description}
               </p>
 
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Button size="lg" className="flex-1 sm:flex-none">
+                  <Download className="mr-2 h-5 w-5" />
+                  Download
+                </Button>
+                <Button size="lg" variant="secondary" className="flex-1 sm:flex-none">
+                  <Play className="mr-2 h-5 w-5" />
+                  Watch Now
+                </Button>
+              </div>
+
               <div className="my-8 h-40 md:h-60 w-full rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground border border-dashed">
                 ADVERTISEMENT
               </div>
             </div>
           </div>
         </main>
+
+        <section className="py-12 md:py-16 border-t border-border bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-headline font-bold mb-8 text-foreground">
+              You Might Like
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {recommendedContent.map((content) => (
+                <ContentCard key={content.id} content={content} />
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
