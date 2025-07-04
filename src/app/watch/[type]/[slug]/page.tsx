@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { allContent } from '@/lib/data';
 import type { Content } from '@/types';
 import { ContentCard } from '@/components/content-card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ThumbsUp, ThumbsDown, Zap, Volume2, Maximize, Pause, Play } from 'lucide-react';
+import { ArrowLeft, ThumbsUp, ThumbsDown, Zap, Volume2, VolumeX, Maximize, Pause, Play } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
 
 export default function WatchPage() {
   const params = useParams<{ type: string; slug: string }>();
@@ -16,6 +17,8 @@ export default function WatchPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const previousVolumeRef = useRef(1);
 
   useEffect(() => {
     const { type, slug } = params;
@@ -34,7 +37,7 @@ export default function WatchPage() {
     }
   }, [params, router]);
 
-  // Video player logic
+  // Video player setup and progress tracking
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !item) return;
@@ -44,6 +47,9 @@ export default function WatchPage() {
     if (savedTime) {
       video.currentTime = parseFloat(savedTime);
     }
+    
+    // Set initial volume
+    video.volume = volume;
 
     // Save progress
     const handleTimeUpdate = () => {
@@ -71,6 +77,14 @@ export default function WatchPage() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [item]);
+  
+  // Sync volume state with video element
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+        video.volume = volume;
+    }
+  }, [volume])
 
 
   const togglePlayPause = () => {
@@ -85,10 +99,10 @@ export default function WatchPage() {
   };
 
   const toggleFullscreen = () => {
-    const video = videoRef.current;
-    if (video) {
+    const videoContainer = videoRef.current?.parentElement;
+    if (videoContainer) {
       if (!document.fullscreenElement) {
-        video.requestFullscreen().catch(err => {
+        videoContainer.requestFullscreen().catch(err => {
           alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
       } else {
@@ -96,6 +110,38 @@ export default function WatchPage() {
       }
     }
   };
+
+
+  const handleVolumeChange = (value: number[]) => {
+    const newVolume = value[0];
+    setVolume(newVolume);
+    if (newVolume > 0) {
+        previousVolumeRef.current = newVolume;
+    }
+  };
+
+  const toggleMute = () => {
+    if (volume > 0) {
+      previousVolumeRef.current = volume;
+      setVolume(0);
+    } else {
+      setVolume(previousVolumeRef.current > 0 ? previousVolumeRef.current : 1);
+    }
+  };
+  
+  const handleProgressSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+      const video = videoRef.current;
+      if (!video || !video.duration) return;
+
+      const progressWrapper = e.currentTarget;
+      const rect = progressWrapper.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const width = rect.width;
+      const newTime = (clickX / width) * video.duration;
+      
+      video.currentTime = newTime;
+      setProgress((newTime / video.duration) * 100);
+  }
 
 
   if (!item) {
@@ -119,7 +165,7 @@ export default function WatchPage() {
         <div className="relative aspect-video w-full max-w-5xl mx-auto bg-slate-900 rounded-lg overflow-hidden group shadow-2xl shadow-primary/20">
           <video
             ref={videoRef}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain bg-black"
             poster={item.imageUrl}
             controls={false}
             onClick={togglePlayPause}
@@ -130,24 +176,42 @@ export default function WatchPage() {
             Your browser does not support the video tag.
           </video>
 
-           <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
+           <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 opacity-0 group-hover:opacity-100 focus-within:opacity-100 data-[playing=false]:opacity-100" data-playing={isPlaying}>
               <Button variant="ghost" size="icon" className="w-20 h-20 hover:bg-white/10 rounded-full" onClick={togglePlayPause}>
                   {isPlaying ? <Pause className="w-10 h-10"/> : <Play className="w-10 h-10 fill-white"/>}
               </Button>
            </div>
            
            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent transition-opacity duration-300 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
-                <div className="w-full h-1.5 bg-white/20 rounded-full cursor-pointer hover:h-2 transition-all">
-                    <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }}></div>
+                <div 
+                    className="w-full h-1.5 bg-white/20 rounded-full cursor-pointer group/progress hover:h-2 transition-all"
+                    onClick={handleProgressSeek}
+                >
+                    <div className="h-full bg-white/40 rounded-full relative">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }}></div>
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-primary shadow opacity-0 group-hover/progress:opacity-100 transition-opacity" 
+                        style={{ left: `${progress}%` }}>
+                      </div>
+                    </div>
                 </div>
                 <div className="flex items-center justify-between mt-2 text-white/90">
                     <div className="flex items-center gap-2 md:gap-4">
                         <Button variant="ghost" size="icon" className="hover:bg-white/10 rounded-full" onClick={togglePlayPause}>
                            {isPlaying ? <Pause className="w-6 h-6"/> : <Play className="w-6 h-6 fill-white"/>}
                         </Button>
-                        <Button variant="ghost" size="icon" className="hover:bg-white/10 rounded-full">
-                           <Volume2 className="w-6 h-6" />
-                        </Button>
+                        <div className="flex items-center gap-2 group/volume">
+                            <Button variant="ghost" size="icon" className="hover:bg-white/10 rounded-full" onClick={toggleMute}>
+                               {volume === 0 ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                            </Button>
+                            <Slider
+                                value={[volume]}
+                                max={1}
+                                step={0.05}
+                                onValueChange={handleVolumeChange}
+                                className="w-0 group-hover/volume:w-24 transition-[width] duration-300 ease-in-out"
+                            />
+                        </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-4">
                         <Button variant="ghost" size="icon" className="hover:bg-white/10 rounded-full" onClick={toggleFullscreen}>
