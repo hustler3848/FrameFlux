@@ -8,7 +8,8 @@ export interface Content {
   rating: number; // Will be 0-5 scale
   imageUrl: string;
   slug: string; // Kept for consistency, will also be imdbID
-  duration: number; // in minutes
+  duration: number; // in minutes for movies, or per-episode for series
+  totalSeasons?: number; // for series
 }
 
 // Type for the OMDb search results list
@@ -49,6 +50,7 @@ export interface OMDbContent {
     imdbVotes: string;
     imdbID: string;
     Type: 'movie' | 'series' | 'episode';
+    totalSeasons?: string;
     DVD?: string;
     BoxOffice?: string;
     Production?: string;

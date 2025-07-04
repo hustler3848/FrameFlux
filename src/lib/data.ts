@@ -62,6 +62,7 @@ export function formatContent(omdbItem: OMDbContent): Content {
         type = 'Webseries';
     }
     const rating = omdbItem.imdbRating !== 'N/A' ? parseFloat(omdbItem.imdbRating) : 0;
+    const seasons = omdbItem.totalSeasons ? parseInt(omdbItem.totalSeasons, 10) : NaN;
     
     return {
         id: omdbItem.imdbID,
@@ -74,5 +75,6 @@ export function formatContent(omdbItem: OMDbContent): Content {
         imageUrl: omdbItem.Poster !== 'N/A' ? omdbItem.Poster.replace('SX300', 'SX600') : 'https://placehold.co/600x900.png',
         slug: omdbItem.imdbID, // Using imdbID as the slug
         duration: omdbItem.Runtime !== 'N/A' ? parseInt(omdbItem.Runtime.replace(/ min/g, ''), 10) : 0,
+        totalSeasons: !isNaN(seasons) ? seasons : undefined,
     };
 }

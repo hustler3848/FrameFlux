@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { getContentBySlug, getInitialContent } from "@/lib/actions";
 import { Badge } from "@/components/ui/badge";
-import { Star, Calendar, Clock, Tv, Download, Play } from "lucide-react";
+import { Star, Calendar, Clock, Tv, Download, Play, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/components/content-card";
 import { Header } from "@/components/header";
@@ -65,6 +65,7 @@ export default async function ContentPage({ params }: Props) {
     .slice(0, 10);
 
   const formatDurationISO = (minutes: number) => {
+    if (!minutes || minutes <= 0) return undefined;
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     let isoString = 'PT';
@@ -72,25 +73,33 @@ export default async function ContentPage({ params }: Props) {
     if (mins > 0) isoString += `${mins}M`;
     return isoString;
   };
-  const isoDuration = formatDurationISO(item.duration);
 
-  const jsonLd = {
+  const jsonLd: any = {
     "@context": "https://schema.org",
-    "@type": item.type === 'Movie' ? "Movie" : "TVEpisode",
     "name": item.title,
     "description": item.description,
     "image": item.imageUrl,
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": (item.rating * 2).toString(), // OMDb is 0-10, we convert to 0-5. Schema needs 0-10.
+      "ratingValue": (item.rating * 2).toString(),
       "bestRating": "10",
-      "ratingCount": Math.floor(Math.random() * 1000) + 50 // Random count
+      "ratingCount": Math.floor(Math.random() * 1000) + 50
     },
     "genre": item.genre,
-    ...(item.type === 'Movie' 
-        ? { "datePublished": item.year.toString(), "duration": isoDuration } 
-        : { "partOfSeries": { "@type": "TVSeries", "name": item.title }, "timeRequired": isoDuration })
   };
+
+  if (item.type === 'Movie') {
+      Object.assign(jsonLd, {
+          "@type": "Movie",
+          "datePublished": item.year.toString(),
+          "duration": formatDurationISO(item.duration),
+      });
+  } else { // Anime or Webseries
+      Object.assign(jsonLd, {
+        "@type": "TVSeries",
+        "numberOfSeasons": item.totalSeasons?.toString(),
+    });
+  }
 
   return (
     <>
@@ -142,12 +151,30 @@ export default async function ContentPage({ params }: Props) {
                   <Calendar className="w-5 h-5" />
                   <span>{item.year}</span>
                 </div>
-                 {item.duration > 0 && (
-                    <div className="flex items-center gap-2">
-                        <Clock className="w-5 h-5" />
-                        <span>{item.duration} min</span>
-                    </div>
-                 )}
+
+                {item.type === 'Movie' ? (
+                  item.duration > 0 && (
+                      <div className="flex items-center gap-2">
+                          <Clock className="w-5 h-5" />
+                          <span>{item.duration} min</span>
+                      </div>
+                  )
+                ) : (
+                  <>
+                    {item.totalSeasons && item.totalSeasons > 0 && (
+                        <div className="flex items-center gap-2">
+                            <Layers className="w-5 h-5" />
+                            <span>{item.totalSeasons} Season{item.totalSeasons !== 1 ? 's' : ''}</span>
+                        </div>
+                    )}
+                    {item.duration > 0 && (
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-5 h-5" />
+                            <span>{item.duration} min / ep</span>
+                        </div>
+                    )}
+                  </>
+                )}
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
