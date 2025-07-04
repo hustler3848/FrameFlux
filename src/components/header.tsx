@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -12,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   searchQuery: string;
@@ -37,6 +39,16 @@ export function Header({
   const [typeOpen, setTypeOpen] = React.useState(false);
   const [genreOpen, setGenreOpen] = React.useState(false);
   const [yearOpen, setYearOpen] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
 
   const getFilterTypeLabel = (value: string) => {
     switch (value) {
@@ -52,8 +64,16 @@ export function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+    <header className={cn(
+      "sticky top-0 z-50 w-full border-b transition-all duration-300 ease-in-out",
+      isScrolled 
+        ? "border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-lg"
+        : "border-transparent"
+    )}>
+      <div className={cn(
+        "container mx-auto flex max-w-7xl items-center gap-4 px-4 transition-all duration-300 ease-in-out",
+        isScrolled ? "h-20" : "h-16"
+      )}>
         <Link href="/" className="flex items-center gap-2 mr-6">
           <Clapperboard className="h-6 w-6 text-primary" />
           <span className="font-bold font-headline text-xl">FrameFlux</span>
