@@ -76,16 +76,6 @@ export default function Home() {
     setFilters((prev) => ({ ...prev, [filterType]: value }));
   }, []);
 
-  useEffect(() => {
-    const typeFromUrl = searchParams.get("type");
-    if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime")) {
-        if (filters.type !== typeFromUrl) {
-            handleFilterChange("type", typeFromUrl);
-        }
-    }
-  }, [searchParams, filters.type, handleFilterChange]);
-
-
   const genresWithCount = useMemo(() => {
     if (!content.length) return [];
     const counts: Record<string, number> = {};
@@ -98,6 +88,24 @@ export default function Home() {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
   }, [content]);
+
+  useEffect(() => {
+    const typeFromUrl = searchParams.get("type");
+    if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime")) {
+        if (filters.type !== typeFromUrl) {
+            handleFilterChange("type", typeFromUrl);
+        }
+    }
+    
+    const genreFromUrl = searchParams.get("genre");
+    if (genreFromUrl && filters.genre !== genreFromUrl) {
+      if (genresWithCount.some(g => g.name === genreFromUrl)) {
+        handleFilterChange("genre", genreFromUrl);
+      }
+    }
+
+  }, [searchParams, filters.type, filters.genre, handleFilterChange, genresWithCount]);
+
 
   const years = useMemo(() => {
     if (!content.length) return [];
