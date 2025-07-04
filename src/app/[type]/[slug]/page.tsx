@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
-import { getContentBySlug, getInitialContent } from "@/lib/data";
+import { getContentBySlug, getInitialContent } from "@/lib/actions";
 import { Badge } from "@/components/ui/badge";
 import { Star, Calendar, Clock, Tv, Download, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";

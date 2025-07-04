@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getContentBySlug, getInitialContent } from '@/lib/data';
+import { getContentBySlug, getInitialContent } from '@/lib/actions';
 import type { Content } from '@/types';
 import { ContentCard } from '@/components/content-card';
 import { Button } from '@/components/ui/button';

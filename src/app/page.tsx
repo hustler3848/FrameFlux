@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getInitialContent } from "@/lib/data";
+import { getInitialContent } from "@/lib/actions";
 import type { Content } from "@/types";
 import { Header } from "@/components/header";
 import { ContentCard } from "@/components/content-card";

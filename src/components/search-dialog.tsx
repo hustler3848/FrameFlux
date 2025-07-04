@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { searchContent } from '@/lib/data';
+import { searchContent } from '@/lib/actions';
 import type { Content } from '@/types';
 import { ScrollArea } from './ui/scroll-area';
 import Link from 'next/link';
