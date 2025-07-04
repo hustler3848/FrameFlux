@@ -84,6 +84,7 @@ export function Header({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
+                sideOffset={-1}
                 onMouseLeave={() => setTypeOpen(false)}
                 className="w-40"
               >
@@ -114,8 +115,9 @@ export function Header({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
+                sideOffset={-1}
                 onMouseLeave={() => setGenreOpen(false)}
-                className="w-48 max-h-80 overflow-y-auto"
+                className="w-48 max-h-80 overflow-y-auto custom-scrollbar"
               >
                 <DropdownMenuRadioGroup
                   value={filters.genre}
@@ -146,8 +148,9 @@ export function Header({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
+                sideOffset={-1}
                 onMouseLeave={() => setYearOpen(false)}
-                className="w-40 max-h-80 overflow-y-auto"
+                className="w-40 max-h-80 overflow-y-auto custom-scrollbar"
               >
                 <DropdownMenuRadioGroup
                   value={filters.year}
