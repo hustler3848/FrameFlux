@@ -189,7 +189,10 @@ export default async function ContentPage({ params }: Props) {
                     {Array.from({ length: item.totalSeasons }, (_, i) => i + 1).map((seasonNumber) => (
                       <AccordionItem key={seasonNumber} value={`season-${seasonNumber}`} className="border-b last:border-b-0 border-border">
                         <AccordionTrigger className="text-lg font-semibold hover:no-underline px-6 py-4">
-                          Season {seasonNumber}
+                           <div className="flex items-baseline gap-3">
+                            <span>Season {seasonNumber}</span>
+                            <span className="text-sm font-normal text-muted-foreground">(10 Episodes)</span>
+                          </div>
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="flex flex-col gap-3 px-6 pb-4 bg-black/10">
