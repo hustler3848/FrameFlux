@@ -10,6 +10,7 @@ import { ContentCard } from "@/components/content-card";
 import { Header } from "@/components/header";
 import type { Content } from "@/types";
 import { DescriptionWithSeeMore } from "@/components/description-see-more";
+import { cn } from "@/lib/utils";
 
 type Props = {
   params: { type: string; slug: string };
@@ -117,7 +118,14 @@ export default async function ContentPage({ params }: Props) {
             </div>
 
             <div className="md:col-span-2">
-              <Badge className="mb-2 bg-accent text-accent-foreground font-poppins">{item.type}</Badge>
+              <Badge className={cn(
+                "mb-2 font-poppins",
+                item.type === 'Anime' ? 'bg-accent text-accent-foreground' 
+                : item.type === 'Movie' ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground'
+              )}>
+                {item.type}
+              </Badge>
               <h1 className="text-4xl lg:text-5xl font-bold font-headline text-foreground">
                 {item.title}
               </h1>

@@ -34,13 +34,33 @@ export const initialContentIds = [
     "tt12590266", // Cyberpunk: Edgerunners (2022)
     "tt13616990", // Chainsaw Man (2022)
     "tt23963188", // Oshi no Ko (2023)
-    "tt13790832", // Spy x Family (2022)
+    "tt13790832", // Spy x Family (2022),
+
+    // Webseries
+    "tt4574334", // Stranger Things
+    "tt0944947", // Game of Thrones
+    "tt1190634", // The Boys
+    "tt0903747", // Breaking Bad
+    "tt2442560", // Peaky Blinders
+    "tt7366338", // Chernobyl
 ];
 
 
 // Helper to format OMDb API response into our Content type
 export function formatContent(omdbItem: OMDbContent): Content {
-    const type = omdbItem.Type === 'movie' ? 'Movie' : 'Anime'; // Treat 'series' as 'Anime'
+    let type: 'Movie' | 'Anime' | 'Webseries';
+    if (omdbItem.Type === 'movie') {
+        type = 'Movie';
+    } else if (omdbItem.Type === 'series') {
+        if (omdbItem.Genre && omdbItem.Genre.includes('Animation')) {
+            type = 'Anime';
+        } else {
+            type = 'Webseries';
+        }
+    } else {
+        // Fallback for 'episode' or other types, we can treat them as Webseries for now
+        type = 'Webseries';
+    }
     const rating = omdbItem.imdbRating !== 'N/A' ? parseFloat(omdbItem.imdbRating) : 0;
     
     return {

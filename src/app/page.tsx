@@ -96,7 +96,7 @@ export default function Home() {
   }, [content]);
 
   useEffect(() => {
-    if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime")) {
+    if (typeFromUrl && (typeFromUrl === "movie" || typeFromUrl === "anime" || typeFromUrl === "webseries")) {
         if (filters.type !== typeFromUrl) {
             handleFilterChange("type", typeFromUrl);
         }
@@ -243,6 +243,7 @@ export default function Home() {
                     <Button variant={filters.type === 'all' ? 'secondary' : 'ghost'} className="w-full justify-start" onClick={() => handleFilterChange('type', 'all')}>All Types</Button>
                     <Button variant={filters.type === 'movie' ? 'secondary' : 'ghost'} className="w-full justify-start" onClick={() => handleFilterChange('type', 'movie')}><Film className="mr-2 h-4 w-4"/>Movies</Button>
                     <Button variant={filters.type === 'anime' ? 'secondary' : 'ghost'} className="w-full justify-start" onClick={() => handleFilterChange('type', 'anime')}><Tv className="mr-2 h-4 w-4"/>Anime</Button>
+                    <Button variant={filters.type === 'webseries' ? 'secondary' : 'ghost'} className="w-full justify-start" onClick={() => handleFilterChange('type', 'webseries')}><Tv className="mr-2 h-4 w-4"/>Webseries</Button>
                  </div>
               </div>
               

@@ -2,7 +2,7 @@ export interface Content {
   id: string; // This will be the imdbID
   title: string;
   description: string;
-  type: 'Movie' | 'Anime';
+  type: 'Movie' | 'Anime' | 'Webseries';
   genre: string[];
   year: number;
   rating: number; // Will be 0-5 scale

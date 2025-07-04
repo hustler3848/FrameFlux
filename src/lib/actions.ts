@@ -51,7 +51,7 @@ export async function searchContent(query: string): Promise<Content[]> {
                 id: item.imdbID,
                 title: item.Title,
                 description: '', 
-                type: item.Type === 'movie' ? 'Movie' : 'Anime',
+                type: item.Type === 'movie' ? 'Movie' : 'Webseries', // Treat series/episode as Webseries
                 genre: [],
                 year: parseInt(item.Year, 10) || 0,
                 rating: 0,

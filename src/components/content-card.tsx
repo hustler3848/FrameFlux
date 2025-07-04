@@ -38,7 +38,14 @@ export function ContentCard({ content }: ContentCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
             <Badge
-              className={cn("text-xs", content.type === 'Anime' ? 'bg-accent text-accent-foreground font-poppins' : 'bg-primary text-primary-foreground')}
+              className={cn(
+                "text-xs",
+                content.type === 'Anime'
+                  ? 'bg-accent text-accent-foreground font-poppins'
+                  : content.type === 'Movie'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-secondary-foreground'
+              )}
             >
               {content.type}
             </Badge>

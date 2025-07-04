@@ -21,6 +21,7 @@ import { SearchDialog } from "./search-dialog";
 const navLinks = [
     { href: "/?type=movie", label: "Movies", type: "movie" },
     { href: "/?type=anime", label: "Anime", type: "anime" },
+    { href: "/?type=webseries", label: "Webseries", type: "webseries" },
 ];
 
 
