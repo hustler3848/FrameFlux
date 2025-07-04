@@ -193,12 +193,15 @@ export default async function ContentPage({ params }: Props) {
                     <Download className="mr-2 h-5 w-5" />
                     Download
                   </Button>
-                  <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" asChild>
-                    <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`}>
-                      <Play className="mr-2 h-5 w-5" />
-                      Watch Now
-                    </Link>
-                  </Button>
+                  {/* Only show "Watch Now" for Movies, not for series without episode data */}
+                  {item.type === 'Movie' && (
+                    <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" asChild>
+                      <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`}>
+                        <Play className="mr-2 h-5 w-5" />
+                        Watch Now
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               )}
 
