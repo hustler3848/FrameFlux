@@ -99,12 +99,18 @@ export function HomePageClient() {
         if (filters.type !== typeFromUrl) {
             handleFilterChange("type", typeFromUrl);
         }
+    } else if (!typeFromUrl && filters.type !== "all") {
+      // Clear type filter if not in URL
+      handleFilterChange("type", "all");
     }
     
     if (genreFromUrl && filters.genre !== genreFromUrl) {
       if (genresWithCount.length > 0 && genresWithCount.some(g => g.name === genreFromUrl)) {
         handleFilterChange("genre", genreFromUrl);
       }
+    } else if (!genreFromUrl && filters.genre !== "all") {
+      // Clear genre filter if not in URL
+      handleFilterChange("genre", "all");
     }
 
   }, [typeFromUrl, genreFromUrl, filters.type, filters.genre, handleFilterChange, genresWithCount]);
@@ -194,10 +200,33 @@ export function HomePageClient() {
         <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-12">
           
           <main className="lg:col-span-3">
+             {isFiltering && (
+              <div className="mb-8 p-4 bg-secondary/20 rounded-lg border">
+                <div className="flex flex-wrap justify-between items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-semibold text-foreground">Filtered by:</span>
+                    {filters.type !== 'all' && <Badge variant="outline" className="capitalize">{filters.type}</Badge>}
+                    {filters.genre !== 'all' && <Badge variant="outline">{filters.genre}</Badge>}
+                    {filters.year !== 'all' && <Badge variant="outline">{filters.year}</Badge>}
+                  </div>
+                  <Button 
+                      variant="link" 
+                      size="sm"
+                      onClick={() => {
+                          setFilters({ type: "all", genre: "all", year: "all" });
+                          router.push('/');
+                      }}
+                      className="text-primary hover:text-primary/80 px-0"
+                  >
+                      Clear all filters
+                  </Button>
+                </div>
+              </div>
+            )}
             {isFiltering && !isLoading && filteredContent.length === 0 ? (
                <div className="text-center py-16">
                   <p className="text-muted-foreground text-lg">No results found.</p>
-                  <p className="text-sm text-muted-foreground">Try adjusting your filters.</p>
+                  <p className="text-sm text-muted-foreground">Try adjusting your filters or clearing them.</p>
               </div>
             ) : (
               <>
