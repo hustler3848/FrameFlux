@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -16,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Film, Tv } from "lucide-react";
+import { Search, Film, Tv, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { HeroSection } from "@/components/hero-section";
@@ -59,6 +60,8 @@ export default function Home() {
     genre: "all",
     year: "all",
   });
+  const [latestPage, setLatestPage] = useState(1);
+  const ITEMS_PER_PAGE = 8;
   const router = useRouter();
   const searchParams = useSearchParams();
   const typeFromUrl = searchParams.get("type");
@@ -76,6 +79,7 @@ export default function Home() {
   
   const handleFilterChange = useCallback((filterType: string, value: string) => {
     setFilters((prev) => ({ ...prev, [filterType]: value }));
+    setLatestPage(1);
   }, []);
 
   const genresWithCount = useMemo(() => {
@@ -145,7 +149,18 @@ export default function Home() {
   );
   
   const heroContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 5), [content]);
-  const latestContent = useMemo(() => [...filteredContent].sort((a,b) => b.year - a.year).slice(0, 8), [filteredContent]);
+
+  const sortedLatestContent = useMemo(() => {
+    return [...filteredContent].sort((a, b) => b.year - a.year);
+  }, [filteredContent]);
+
+  const totalLatestPages = Math.ceil(sortedLatestContent.length / ITEMS_PER_PAGE);
+
+  const paginatedLatestContent = useMemo(() => {
+    const startIndex = (latestPage - 1) * ITEMS_PER_PAGE;
+    return sortedLatestContent.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [sortedLatestContent, latestPage]);
+
   const popularContent = useMemo(() => [...filteredContent].sort((a,b) => b.rating - a.rating).slice(0, 8), [filteredContent]);
 
   return (
@@ -187,7 +202,34 @@ export default function Home() {
               </div>
             ) : (
               <>
-                <ContentSection title="Latest Releases" items={latestContent} isLoading={isLoading}/>
+                <ContentSection title="Latest Releases" items={paginatedLatestContent} isLoading={isLoading}/>
+                
+                {totalLatestPages > 1 && !isLoading && (
+                  <div className="flex justify-center items-center gap-4 pb-8">
+                    <Button
+                        onClick={() => setLatestPage(p => p - 1)}
+                        disabled={latestPage === 1}
+                        variant="outline"
+                        size="icon"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        <span className="sr-only">Previous Page</span>
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                        Page {latestPage} of {totalLatestPages}
+                    </span>
+                    <Button
+                        onClick={() => setLatestPage(p => p + 1)}
+                        disabled={latestPage === totalLatestPages}
+                        variant="outline"
+                        size="icon"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                        <span className="sr-only">Next Page</span>
+                    </Button>
+                  </div>
+                )}
+
                 <ContentSection title="Most Popular" items={popularContent} isLoading={isLoading}/>
               </>
             )}
