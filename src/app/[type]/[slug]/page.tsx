@@ -159,6 +159,18 @@ export default async function ContentPage({ params }: Props) {
                     <span>{item.duration} min</span>
                   </div>
                 )}
+                 {item.type !== 'Movie' && item.totalSeasons && item.totalSeasons > 0 && (
+                    <div className="flex items-center gap-2">
+                        <Layers className="w-5 h-5" />
+                        <span>{item.totalSeasons} Season{item.totalSeasons > 1 ? 's' : ''}</span>
+                    </div>
+                 )}
+                 {item.type !== 'Movie' && item.duration > 0 && (
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-5 h-5" />
+                        <span>{item.duration} min / ep</span>
+                    </div>
+                )}
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
@@ -173,7 +185,6 @@ export default async function ContentPage({ params }: Props) {
               
               {item.type !== 'Movie' && item.totalSeasons && item.totalSeasons > 0 ? (
                 <div className="mt-8">
-                  <h3 className="text-2xl font-bold font-headline mb-4">Seasons & Episodes</h3>
                   <Accordion type="single" collapsible className="w-full border rounded-lg">
                     {Array.from({ length: item.totalSeasons }, (_, i) => i + 1).map((seasonNumber) => (
                       <AccordionItem key={seasonNumber} value={`season-${seasonNumber}`} className="border-b last:border-b-0 border-border">
