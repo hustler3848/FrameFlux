@@ -61,13 +61,28 @@ export function HeroSection({ content }: HeroSectionProps) {
               <div className="absolute inset-0 flex items-center">
                 <div className="container mx-auto max-w-screen-2xl px-4 md:px-12 text-white">
                   <div className="max-w-2xl">
-                    <Badge variant={item.type === 'Anime' ? 'default' : 'secondary'} className="bg-white/10 border-none backdrop-blur-sm mb-4">
+                     <Badge variant={item.type === 'Anime' ? 'default' : 'secondary'} className={cn(
+                        "bg-white/10 border-none backdrop-blur-sm mb-4",
+                        selectedIndex === index
+                            ? "opacity-0 animate-fade-in [animation-delay:200ms]"
+                            : "opacity-0"
+                    )}>
                         {item.type}
                     </Badge>
-                    <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4">
+                    <h1 className={cn(
+                        "text-4xl md:text-6xl font-bold font-headline mb-4",
+                        selectedIndex === index
+                            ? "opacity-0 animate-slide-in-from-left [animation-delay:300ms]"
+                            : "opacity-0"
+                    )}>
                       {item.title}
                     </h1>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm md:text-base text-white/80">
+                    <div className={cn(
+                        "flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm md:text-base text-white/80",
+                         selectedIndex === index
+                            ? "opacity-0 animate-slide-in-from-left [animation-delay:400ms]"
+                            : "opacity-0"
+                    )}>
                       <div className="flex items-center gap-1.5">
                         <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                         <span>{item.rating}</span>
@@ -80,15 +95,29 @@ export function HeroSection({ content }: HeroSectionProps) {
                         {item.genre.slice(0,2).map(g => <span key={g}>{g}</span>).reduce((prev, curr) => [prev, '·', curr] as any)}
                       </div>
                     </div>
-                    <p className="mb-6 text-base md:text-lg text-white/80 line-clamp-3">
+                    <p className={cn(
+                        "mb-6 text-base md:text-lg text-white/80 line-clamp-3",
+                        selectedIndex === index
+                            ? "opacity-0 animate-slide-in-from-left [animation-delay:500ms]"
+                            : "opacity-0"
+                    )}>
                       {item.description}
                     </p>
-                    <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`} passHref>
-                      <Button size="lg" variant="destructive">
+                    <Button 
+                      asChild 
+                      size="lg" 
+                      variant="destructive"
+                      className={cn(
+                          selectedIndex === index
+                              ? "opacity-0 animate-fade-in [animation-delay:600ms]"
+                              : "opacity-0"
+                      )}
+                    >
+                      <Link href={`/watch/${item.type.toLowerCase()}/${item.slug}`}>
                         <PlayCircle className="mr-2" />
                         Watch Now
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </div>
