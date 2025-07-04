@@ -175,7 +175,7 @@ export default async function ContentPage({ params }: Props) {
 
               <div className="mt-6 flex flex-wrap gap-2 opacity-0 animate-slide-in-from-top [animation-delay:500ms]">
                 {item.genre.map((g) => (
-                   <Link key={g} href={`/?genre=${g}`} passHref>
+                   <Link key={g} href={`/?genre=${g}`}>
                     <Badge variant="secondary" className="hover:bg-primary/10 hover:border-primary/50 cursor-pointer transition-colors">{g}</Badge>
                   </Link>
                 ))}
