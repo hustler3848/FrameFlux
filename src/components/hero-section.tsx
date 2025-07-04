@@ -59,7 +59,7 @@ export function HeroSection({ content }: HeroSectionProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
               <div className="absolute inset-0 flex items-center">
-                <div className="container mx-auto max-w-screen-2xl px-4 text-white">
+                <div className="container mx-auto max-w-screen-2xl px-4 md:px-12 text-white">
                   <div className="max-w-2xl">
                     <Badge variant={item.type === 'Anime' ? 'default' : 'secondary'} className="bg-white/10 border-none backdrop-blur-sm mb-4">
                         {item.type}
