@@ -18,6 +18,8 @@ import {
 import { Search, Film, Tv } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { HeroSection } from "@/components/hero-section";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ContentSection = ({
   title,
@@ -113,12 +115,20 @@ export default function Home() {
     [searchQuery, filters]
   );
   
+  const heroContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 5), [content]);
   const latestContent = useMemo(() => [...content].sort((a,b) => b.year - a.year).slice(0, 8), [content]);
   const popularContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 8), [content]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
+      
+      {isLoading ? (
+        <Skeleton className="w-full h-[50vh] md:h-[75vh]" />
+      ) : (
+        <HeroSection content={heroContent} />
+      )}
+
       <div className="container mx-auto max-w-screen-2xl px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-12">
           
