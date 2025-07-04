@@ -123,8 +123,8 @@ export default function Home() {
   );
   
   const heroContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 5), [content]);
-  const latestContent = useMemo(() => [...content].sort((a,b) => b.year - a.year).slice(0, 8), [content]);
-  const popularContent = useMemo(() => [...content].sort((a,b) => b.rating - a.rating).slice(0, 8), [content]);
+  const latestContent = useMemo(() => [...filteredContent].sort((a,b) => b.year - a.year).slice(0, 8), [filteredContent]);
+  const popularContent = useMemo(() => [...filteredContent].sort((a,b) => b.rating - a.rating).slice(0, 8), [filteredContent]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -158,22 +158,11 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-12">
           
           <main className="lg:col-span-3">
-            {isFiltering ? (
-              <section>
-                <h2 className="text-3xl font-headline font-bold mb-8 text-foreground">
-                  Results
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {isLoading
-                    ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
-                    : filteredContent.map((item) => <ContentCard key={item.id} content={item} />)}
-                </div>
-                {!isLoading && filteredContent.length === 0 && (
-                    <div className="col-span-full text-center py-16">
-                        <p className="text-muted-foreground text-lg">No results found. Try adjusting your search or filters.</p>
-                    </div>
-                )}
-              </section>
+            {isFiltering && !isLoading && filteredContent.length === 0 ? (
+               <div className="text-center py-16">
+                  <p className="text-muted-foreground text-lg">No results found.</p>
+                  <p className="text-sm text-muted-foreground">Try adjusting your filters.</p>
+              </div>
             ) : (
               <>
                 <ContentSection title="Latest Releases" items={latestContent} isLoading={isLoading}/>
