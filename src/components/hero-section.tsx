@@ -54,7 +54,7 @@ export function HeroSection({ content }: HeroSectionProps) {
                 alt={item.title}
                 fill
                 priority={index === 0}
-                className="object-cover"
+                className="object-cover object-top"
                 data-ai-hint={`hero ${item.genre[0].toLowerCase()}`}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
