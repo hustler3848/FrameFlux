@@ -202,6 +202,8 @@ export default function Home() {
               </div>
             ) : (
               <>
+                <ContentSection title="Most Popular" items={popularContent} isLoading={isLoading}/>
+              
                 <ContentSection title="Latest Releases" items={paginatedLatestContent} isLoading={isLoading}/>
                 
                 {totalLatestPages > 1 && !isLoading && (
@@ -229,8 +231,6 @@ export default function Home() {
                     </Button>
                   </div>
                 )}
-
-                <ContentSection title="Most Popular" items={popularContent} isLoading={isLoading}/>
               </>
             )}
           </main>
