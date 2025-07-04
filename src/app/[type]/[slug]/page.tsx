@@ -1,3 +1,4 @@
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -151,29 +152,11 @@ export default async function ContentPage({ params }: Props) {
                   <Calendar className="w-5 h-5" />
                   <span>{item.year}</span>
                 </div>
-
-                {item.type === 'Movie' ? (
-                  item.duration > 0 && (
-                      <div className="flex items-center gap-2">
-                          <Clock className="w-5 h-5" />
-                          <span>{item.duration} min</span>
-                      </div>
-                  )
-                ) : (
-                  <>
-                    {item.totalSeasons && item.totalSeasons > 0 && (
-                        <div className="flex items-center gap-2">
-                            <Layers className="w-5 h-5" />
-                            <span>{item.totalSeasons} Season{item.totalSeasons !== 1 ? 's' : ''}</span>
-                        </div>
-                    )}
-                    {item.duration > 0 && (
-                        <div className="flex items-center gap-2">
-                            <Clock className="w-5 h-5" />
-                            <span>{item.duration} min / ep</span>
-                        </div>
-                    )}
-                  </>
+                {item.type === 'Movie' && item.duration > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5" />
+                    <span>{item.duration} min</span>
+                  </div>
                 )}
               </div>
 
@@ -186,6 +169,32 @@ export default async function ContentPage({ params }: Props) {
               </div>
               
               <DescriptionWithSeeMore text={item.description} className="mt-8" />
+              
+              {item.type !== 'Movie' && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-bold font-headline mb-4">Series Info</h3>
+                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+                    {item.totalSeasons && item.totalSeasons > 0 && (
+                        <div className="flex items-center gap-3">
+                            <Layers className="w-6 h-6 text-primary" />
+                            <div>
+                                <p className="text-muted-foreground text-sm">Seasons</p>
+                                <p className="font-bold text-lg text-foreground">{item.totalSeasons}</p>
+                            </div>
+                        </div>
+                    )}
+                    {item.duration > 0 && (
+                        <div className="flex items-center gap-3">
+                            <Clock className="w-6 h-6 text-primary" />
+                            <div>
+                                <p className="text-muted-foreground text-sm">Episode Duration</p>
+                                <p className="font-bold text-lg text-foreground">{item.duration} min</p>
+                            </div>
+                        </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button size="lg" className="flex-1 sm:flex-none">
