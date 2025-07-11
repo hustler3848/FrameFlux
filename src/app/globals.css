@@ -69,6 +69,9 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    @apply bg-primary/30;
+  }
 }
 
 @layer utilities {

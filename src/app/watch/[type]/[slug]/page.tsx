@@ -256,7 +256,7 @@ export default function WatchPage() {
   const isSeries = item.type !== 'Movie';
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-black text-white">
       <main className="container mx-auto px-4 py-4 md:py-8">
         <div className="mb-4">
           <Button variant="ghost" onClick={() => router.push(`/${item.type.toLowerCase()}/${item.slug}`)} className="hover:bg-white/10 text-white/80 hover:text-white">
